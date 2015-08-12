@@ -55,6 +55,8 @@
 		619C5EDA1B43C5500019C284 /* AttendanceViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619C5ED91B43C5500019C284 /* AttendanceViewCtrl.swift */; };
 		619D31E31B451647008409F9 /* DisciplineViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619D31E21B451647008409F9 /* DisciplineViewCtrl.swift */; };
 		619EA1D81B5F8F4500EE4BE7 /* MessageDetailViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619EA1D71B5F8F4500EE4BE7 /* MessageDetailViewCtrl.swift */; };
+		61A644ED1B79EDC000AC0D97 /* OptionSettingViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A644EC1B79EDC000AC0D97 /* OptionSettingViewCtrl.swift */; };
+		61A644EF1B79F12700AC0D97 /* OptionEditViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A644EE1B79F12700AC0D97 /* OptionEditViewCtrl.swift */; };
 		61ABA7F01B4FB88B0071F9D4 /* MMDrawerBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 61ABA7E81B4FB88B0071F9D4 /* MMDrawerBarButtonItem.m */; };
 		61ABA7F11B4FB88B0071F9D4 /* MMDrawerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61ABA7EA1B4FB88B0071F9D4 /* MMDrawerController.m */; };
 		61ABA7F21B4FB88B0071F9D4 /* MMDrawerVisualState.m in Sources */ = {isa = PBXBuildFile; fileRef = 61ABA7ED1B4FB88B0071F9D4 /* MMDrawerVisualState.m */; };
@@ -62,6 +64,10 @@
 		61ABA7F51B4FB92C0071F9D4 /* SideMenuViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61ABA7F41B4FB92C0071F9D4 /* SideMenuViewCtrl.swift */; };
 		61ABA7F71B4FC7C70071F9D4 /* ClassViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61ABA7F61B4FC7C70071F9D4 /* ClassViewCtrl.swift */; };
 		61BA7D841B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BA7D831B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift */; };
+		61C07E5A1B7B305B00B05D20 /* Message Filled-32 White.png in Resources */ = {isa = PBXBuildFile; fileRef = 61C07E581B7B305B00B05D20 /* Message Filled-32 White.png */; };
+		61C07E5B1B7B305B00B05D20 /* Thumb Up Filled-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 61C07E591B7B305B00B05D20 /* Thumb Up Filled-32.png */; };
+		61C07E5D1B7B343000B05D20 /* Thumb Up Filled-25.png in Resources */ = {isa = PBXBuildFile; fileRef = 61C07E5C1B7B343000B05D20 /* Thumb Up Filled-25.png */; };
+		61C07E5F1B7B36BC00B05D20 /* VoteViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C07E5E1B7B36BC00B05D20 /* VoteViewCtrl.swift */; };
 		61C513ED1B5CFD4700921D2A /* CourseScoreViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C513EC1B5CFD4700921D2A /* CourseScoreViewCtrl.swift */; };
 		61C5E58C1B4BDF5E008F1DEF /* CommonStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5E58B1B4BDF5E008F1DEF /* CommonStruct.swift */; };
 		61C5E58E1B4BE15A008F1DEF /* StudentCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5E58D1B4BE15A008F1DEF /* StudentCoreData.swift */; };
@@ -160,6 +166,8 @@
 		619C5ED91B43C5500019C284 /* AttendanceViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttendanceViewCtrl.swift; sourceTree = "<group>"; };
 		619D31E21B451647008409F9 /* DisciplineViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisciplineViewCtrl.swift; sourceTree = "<group>"; };
 		619EA1D71B5F8F4500EE4BE7 /* MessageDetailViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDetailViewCtrl.swift; sourceTree = "<group>"; };
+		61A644EC1B79EDC000AC0D97 /* OptionSettingViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionSettingViewCtrl.swift; sourceTree = "<group>"; };
+		61A644EE1B79F12700AC0D97 /* OptionEditViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionEditViewCtrl.swift; sourceTree = "<group>"; };
 		61ABA7E61B4FB88A0071F9D4 /* oneAdminTeacher-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "oneAdminTeacher-Bridging-Header.h"; sourceTree = "<group>"; };
 		61ABA7E71B4FB88B0071F9D4 /* MMDrawerBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMDrawerBarButtonItem.h; sourceTree = "<group>"; };
 		61ABA7E81B4FB88B0071F9D4 /* MMDrawerBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMDrawerBarButtonItem.m; sourceTree = "<group>"; };
@@ -173,6 +181,10 @@
 		61ABA7F41B4FB92C0071F9D4 /* SideMenuViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideMenuViewCtrl.swift; sourceTree = "<group>"; };
 		61ABA7F61B4FC7C70071F9D4 /* ClassViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassViewCtrl.swift; sourceTree = "<group>"; };
 		61BA7D831B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTeacherPageViewCtrl.swift; sourceTree = "<group>"; };
+		61C07E581B7B305B00B05D20 /* Message Filled-32 White.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Message Filled-32 White.png"; path = "icon/Message Filled-32 White.png"; sourceTree = SOURCE_ROOT; };
+		61C07E591B7B305B00B05D20 /* Thumb Up Filled-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Thumb Up Filled-32.png"; path = "icon/Thumb Up Filled-32.png"; sourceTree = SOURCE_ROOT; };
+		61C07E5C1B7B343000B05D20 /* Thumb Up Filled-25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Thumb Up Filled-25.png"; path = "icon/Thumb Up Filled-25.png"; sourceTree = SOURCE_ROOT; };
+		61C07E5E1B7B36BC00B05D20 /* VoteViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoteViewCtrl.swift; sourceTree = "<group>"; };
 		61C513EC1B5CFD4700921D2A /* CourseScoreViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CourseScoreViewCtrl.swift; sourceTree = "<group>"; };
 		61C5E58B1B4BDF5E008F1DEF /* CommonStruct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonStruct.swift; sourceTree = "<group>"; };
 		61C5E58D1B4BE15A008F1DEF /* StudentCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentCoreData.swift; sourceTree = "<group>"; };
@@ -264,6 +276,9 @@
 		61E308D21B2A893400BE36D0 /* icon */ = {
 			isa = PBXGroup;
 			children = (
+				61C07E5C1B7B343000B05D20 /* Thumb Up Filled-25.png */,
+				61C07E581B7B305B00B05D20 /* Message Filled-32 White.png */,
+				61C07E591B7B305B00B05D20 /* Thumb Up Filled-32.png */,
 				61FB5BA91B7074F80006C962 /* Menu 2-26.png */,
 				61E2823B1B6B76A4003DE4B1 /* 1CampusAdminIcon-58.png */,
 				61E2823C1B6B76A4003DE4B1 /* 1CampusAdminIcon-80.png */,
@@ -367,6 +382,9 @@
 				613B684F1B6F4FDF0069637F /* OutboxSendViewCtrl.swift */,
 				61BA7D831B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift */,
 				61DC99361B7351B800C6BA66 /* WatchReaderListViewCtrl.swift */,
+				61A644EC1B79EDC000AC0D97 /* OptionSettingViewCtrl.swift */,
+				61A644EE1B79F12700AC0D97 /* OptionEditViewCtrl.swift */,
+				61C07E5E1B7B36BC00B05D20 /* VoteViewCtrl.swift */,
 				6189CFA61B3D43B00098AAD7 /* SchoolOptionsView.swift */,
 				613C58801B2AC27D00461072 /* DetailViewCtrl.swift */,
 				61F5508E1B2A768900E26A5D /* Main.storyboard */,
@@ -522,6 +540,7 @@
 				613C58851B2AD92100461072 /* Star Filled-50.png in Resources */,
 				612D05201B6A3048002E1239 /* Menu-24.png in Resources */,
 				6114C9001B43A2A800C73E5E /* Purchase Order-32.png in Resources */,
+				61C07E5A1B7B305B00B05D20 /* Message Filled-32 White.png in Resources */,
 				6173AAD31B5791860049EB63 /* Message Filled-32.png in Resources */,
 				61E9D70F1B5656AC00D36552 /* background.png in Resources */,
 				61E308D71B2A997400BE36D0 /* Classroom Filled-50.png in Resources */,
@@ -531,6 +550,8 @@
 				61E9D70D1B56513B00D36552 /* Add User-25.png in Resources */,
 				612123ED1B411525000AA07D /* User-100.png in Resources */,
 				61FB5BAA1B7074F80006C962 /* Menu 2-26.png in Resources */,
+				61C07E5D1B7B343000B05D20 /* Thumb Up Filled-25.png in Resources */,
+				61C07E5B1B7B305B00B05D20 /* Thumb Up Filled-32.png in Resources */,
 				6112A2321B4637F900DA4E77 /* Elective Filled-50.png in Resources */,
 				6173AAD11B5791190049EB63 /* Settings Filled-32.png in Resources */,
 				61FE92E51B58B8BA003BABFE /* Up 4-25.png in Resources */,
@@ -574,6 +595,7 @@
 				619D31E31B451647008409F9 /* DisciplineViewCtrl.swift in Sources */,
 				61ABA7F11B4FB88B0071F9D4 /* MMDrawerController.m in Sources */,
 				6105832C1B4BAB4500274EEA /* ExamScoreViewCtrl.swift in Sources */,
+				61C07E5F1B7B36BC00B05D20 /* VoteViewCtrl.swift in Sources */,
 				615BB25A1B3BD4F800864052 /* HttpClient.swift in Sources */,
 				615BB2601B3BE3FC00864052 /* OAuthHelper.swift in Sources */,
 				61ABA7F31B4FB88B0071F9D4 /* UIViewController+MMDrawerController.m in Sources */,
@@ -588,6 +610,7 @@
 				610C7EFD1B61E0B7001F7C4E /* KeyChain.swift in Sources */,
 				619EA1D81B5F8F4500EE4BE7 /* MessageDetailViewCtrl.swift in Sources */,
 				61076A5D1B5F3E5A00A0CC4C /* MessageViewCtrl.swift in Sources */,
+				61A644EF1B79F12700AC0D97 /* OptionEditViewCtrl.swift in Sources */,
 				615BB25C1B3BD80300864052 /* Util.swift in Sources */,
 				613B68501B6F4FDF0069637F /* OutboxSendViewCtrl.swift in Sources */,
 				612123F31B412BBB000AA07D /* StudentInfoViewCtrl.swift in Sources */,
@@ -598,6 +621,7 @@
 				61BA7D841B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift in Sources */,
 				610E0A541B537AC600186BF3 /* StudentDetailViewCtrl.swift in Sources */,
 				61F550B01B2A7F5400E26A5D /* StudentViewCtrl.swift in Sources */,
+				61A644ED1B79EDC000AC0D97 /* OptionSettingViewCtrl.swift in Sources */,
 				61F5508B1B2A768900E26A5D /* FirstViewController.swift in Sources */,
 				6189CFA71B3D43B00098AAD7 /* SchoolOptionsView.swift in Sources */,
 			);

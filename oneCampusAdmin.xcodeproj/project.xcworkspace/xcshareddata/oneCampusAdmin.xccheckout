@@ -7,34 +7,34 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>2E2EEFAE-E2B7-4B76-9CBF-64D1C5E7DB31</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>oneCampusAdmin</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>3C82A24FF4F33DE0BE6D242114547AE556C1C1B0</key>
-		<string>https://github.com/imcloudwu/oneAdminTeacher.git</string>
+		<key>1C6B64E11A3190BCA1963042963B26B82B3DB831</key>
+		<string>https://github.com/imcloudwu/oneCampusAdmin.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>oneCampusAdmin.xcodeproj/project.xcworkspace</string>
+	<string>oneCampusAdmin.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3C82A24FF4F33DE0BE6D242114547AE556C1C1B0</key>
+		<key>1C6B64E11A3190BCA1963042963B26B82B3DB831</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/imcloudwu/oneAdminTeacher.git</string>
+	<string>https://github.com/imcloudwu/oneCampusAdmin.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>3C82A24FF4F33DE0BE6D242114547AE556C1C1B0</string>
+	<string>1C6B64E11A3190BCA1963042963B26B82B3DB831</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3C82A24FF4F33DE0BE6D242114547AE556C1C1B0</string>
+			<string>1C6B64E11A3190BCA1963042963B26B82B3DB831</string>
 			<key>IDESourceControlWCCName</key>
-			<string>1CampusAdmin</string>
+			<string>oneCampusAdmin</string>
 		</dict>
 	</array>
 </dict>

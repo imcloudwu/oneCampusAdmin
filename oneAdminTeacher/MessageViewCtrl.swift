@@ -26,8 +26,12 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
     var _today : String!
     
     var isFirstLoad = true
+    var onInBox = true
     var UnReadCount = 0
     var ViewTitle = "我的訊息"
+    
+    let MsgIcon = UIImage(named: "Message Filled-32 White.png")
+    let VoteIcon = UIImage(named: "Thumb Up Filled-32.png")
     
     @IBOutlet weak var tableView: UITableView!
     var refreshControl : UIRefreshControl!
@@ -135,7 +139,13 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
                     self.noDataLabel.hidden = false
                 }
                 
-                self.GotoInbox()
+                if self.onInBox{
+                    self.GotoInbox()
+                }
+                else{
+                    self.GotoOutbox()
+                }
+                
                 self.progressTimer.StopProgress()
             })
         })
@@ -182,9 +192,11 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
                 let isSender = obj["sender"].stringValue == "true" ? true : false
                 let isReceiver = obj["receiver"].stringValue == "true" ? true : false
                 
+                let type = obj["type"].stringValue
+                
                 let newDate = format.dateFromString(dateTime)
                 
-                retVal.append(MessageItem(id: id, date: newDate!, isNew: isNew, title: sender, content: message, redirect: redirect, dsnsName: dsnsname, name: name,isSender: isSender, isReceiver: isReceiver))
+                retVal.append(MessageItem(id: id, date: newDate!, isNew: isNew, title: sender, content: message, redirect: redirect, dsnsName: dsnsname, name: name,isSender: isSender, isReceiver: isReceiver, type: type))
             }
         }
         
@@ -222,6 +234,8 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
     
     func GotoInbox(){
         
+        self.onInBox = true
+        
         var tmpData = [MessageItem]()
         
         for mi in self.messageData{
@@ -237,6 +251,8 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
     }
     
     func GotoOutbox(){
+        
+        self.onInBox = false
         
         var tmpData = [MessageItem]()
         
@@ -267,6 +283,13 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
         cell.Date.text = _today == date ? _timeFormate.stringFromDate(data.Date) : date
         cell.Date.textColor = data.IsNew ? UIColor(red: 19 / 255, green: 144 / 255, blue: 255 / 255, alpha: 1) : UIColor.lightGrayColor()
         cell.Content.text = data.Content
+        
+        if data.Type == "normal" || data.Voted {
+            cell.Icon.image = MsgIcon
+        }
+        else{
+            cell.Icon.image = VoteIcon
+        }
         
         return cell
     }
@@ -308,7 +331,10 @@ class MessageItem : Equatable{
     var IsSender : Bool
     var IsReceiver : Bool
     
-    init(id: String, date: NSDate, isNew: Bool, title: String, content: String, redirect: String, dsnsName: String, name: String, isSender: Bool, isReceiver: Bool){
+    var Type : String
+    var Voted : Bool
+    
+    init(id: String, date: NSDate, isNew: Bool, title: String, content: String, redirect: String, dsnsName: String, name: String, isSender: Bool, isReceiver: Bool, type: String,voted:Bool){
         Id = id
         Date = date
         IsNew = isNew
@@ -319,6 +345,14 @@ class MessageItem : Equatable{
         Name = name
         IsSender = isSender
         IsReceiver = isReceiver
+        
+        Type = type
+        Voted = voted
+    }
+    
+    convenience init(id: String, date: NSDate, isNew: Bool, title: String, content: String, redirect: String, dsnsName: String, name: String, isSender: Bool, isReceiver: Bool, type: String) {
+        
+        self.init(id: id, date: date, isNew: isNew, title: title, content: content, redirect: redirect, dsnsName: dsnsName, name: name, isSender: isSender, isReceiver: isReceiver, type: type, voted: false)
     }
 }
 

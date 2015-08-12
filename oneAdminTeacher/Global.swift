@@ -395,6 +395,14 @@ func SetTeachersUUID(){
     }
 }
 
+func RegisterForKeyboardNotifications(vc:UIViewController) {
+    let notificationCenter = NSNotificationCenter.defaultCenter()
+    notificationCenter.addObserver(vc,
+        selector: "keyboardWillBeShown:",
+        name: UIKeyboardWillShowNotification,
+        object: nil)
+}
+
 
 
 

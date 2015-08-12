@@ -102,6 +102,19 @@ class MessageCell : UITableViewCell{
     @IBOutlet weak var Title: UILabel!
     @IBOutlet weak var Content: UILabel!
     @IBOutlet weak var Date: UILabel!
+    @IBOutlet weak var Icon: UIImageView!
+    @IBOutlet weak var IcomFrame: UIView!
+    
+    override func awakeFromNib() {
+        IcomFrame.layer.cornerRadius = IcomFrame.frame.size.width / 2
+        IcomFrame.layer.masksToBounds = true
+    }
+}
+
+class OptionCell : UITableViewCell{
+    
+    @IBOutlet weak var OptionText: UILabel!
+    @IBOutlet weak var OptionContent: UITextView!
     
     override func awakeFromNib() {
     }

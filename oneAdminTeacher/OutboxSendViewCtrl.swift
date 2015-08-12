@@ -15,19 +15,32 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
     @IBOutlet weak var ContentFrame: UIView!
     @IBOutlet weak var Content: UITextView!
     @IBOutlet weak var Receiver: UILabel!
+    @IBOutlet weak var Redirect: UITextField!
+    
+    @IBOutlet weak var ContentBottomCS: NSLayoutConstraint!
     
     var MyTeacherSelector = TeacherSelector()
+    var MyOptions = OptionCollection()
     
     let placeTitle = "訊息內容..."
+    
+    var KeyBoardHeight : CGFloat = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         SchoolName.delegate = self
         Organize.delegate = self
+        Redirect.delegate = self
         Content.delegate = self
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "發送", style: UIBarButtonItemStyle.Done, target: self, action: "Send")
+        let sendBtn = UIBarButtonItem(title: "發送", style: UIBarButtonItemStyle.Done, target: self, action: "Send")
+        let settingBtn = UIBarButtonItem(title: "問卷設定", style: UIBarButtonItemStyle.Done, target: self, action: "Setting")
+        
+        self.navigationItem.rightBarButtonItems = [settingBtn,sendBtn]
+        
+        //self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "發送", style: UIBarButtonItemStyle.Done, target: self, action: "Send")
+        //self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(title: "進階設定", style: UIBarButtonItemStyle.Done, target: self, action: ""))
         
 //        ContentFrame.layer.shadowColor = UIColor.blackColor().CGColor
 //        ContentFrame.layer.shadowOffset = CGSizeMake(3, 3)
@@ -60,7 +73,12 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
     }
     
     override func viewWillAppear(animated: Bool) {
+        RegisterForKeyboardNotifications(self)
         SetReceiverText()
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     func SelectTeacher(){
@@ -88,11 +106,53 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
         let receivers = MyTeacherSelector.GetReceivers()
         let message = Content.text == placeTitle ? "" : Content.text
         
+        let redirect = Redirect.text
+        
         Keychain.save("schoolName", data: schoolName.dataValue)
         
-        NotificationService.SendMessage(schoolName, sender: sender, msg: message, receivers: receivers, accessToken: Global.AccessToken)
+        var options = [String]()
         
-        self.navigationController?.popViewControllerAnimated(true)
+        for item in MyOptions.Items{
+            
+            if item.Value != ""{
+                options.append(item.Value)
+            }
+        }
+        
+        if options.count >= 2{
+            
+            let alert = UIAlertController(title: "此訊息有\(options.count)筆問卷選項,請決定單選或複選?", message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+            
+            alert.addAction(UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil))
+            
+            alert.addAction(UIAlertAction(title: "單選", style: UIAlertActionStyle.Default, handler: { (action1) -> Void in
+                NotificationService.SendMessage(schoolName, type: "single", sender: sender, redirect: redirect, msg: message, receivers: receivers, options: options, accessToken: Global.AccessToken)
+                
+                self.navigationController?.popViewControllerAnimated(true)
+            }))
+            
+            alert.addAction(UIAlertAction(title: "複選", style: UIAlertActionStyle.Default, handler: { (action2) -> Void in
+                NotificationService.SendMessage(schoolName, type: "multiple", sender: sender, redirect: redirect, msg: message, receivers: receivers, options: options, accessToken: Global.AccessToken)
+                
+                self.navigationController?.popViewControllerAnimated(true)
+            }))
+            
+            self.presentViewController(alert, animated: true, completion: nil)
+            
+        }
+        else{
+            NotificationService.SendMessage(schoolName, type: "normal", sender: sender, redirect: redirect, msg: message, receivers: receivers, options: [String](), accessToken: Global.AccessToken)
+            
+            self.navigationController?.popViewControllerAnimated(true)
+        }
+        
+    }
+    
+    func Setting(){
+        let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("OptionSettingViewCtrl") as! OptionSettingViewCtrl
+        nextView.Options = MyOptions
+        
+        self.navigationController?.pushViewController(nextView, animated: true)
     }
     
     func textViewDidBeginEditing(textView: UITextView){
@@ -100,6 +160,10 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
             textView.textColor = UIColor.blackColor()
             textView.text = ""
         }
+        
+        ContentBottomCS.constant = KeyBoardHeight + 10
+        
+        //textView.frame.size.height = 100
     }
     
     func textViewDidEndEditing(textView: UITextView){
@@ -107,6 +171,10 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
             textView.textColor = UIColor.lightGrayColor()
             textView.text = placeTitle
         }
+        
+        ContentBottomCS.constant = 0
+        
+        //textView.frame.size.height = 400
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool{
@@ -124,6 +192,15 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         self.view.endEditing(true)
+    }
+    
+    // Called when the UIKeyboardDidShowNotification is sent.
+    func keyboardWillBeShown(sender: NSNotification) {
+        let info: NSDictionary = sender.userInfo!
+        let value: NSValue = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
+        let keyboardSize: CGSize = value.CGRectValue().size
+        
+        KeyBoardHeight = keyboardSize.height
     }
 }
 

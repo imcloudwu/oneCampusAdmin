@@ -11,6 +11,8 @@
         <attribute name="redirect" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sender" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="voted" optional="YES" attributeType="Boolean" syncable="YES"/>
     </entity>
     <entity name="Student" representedClassName="" syncable="YES">
         <attribute name="dsns" optional="YES" attributeType="String" syncable="YES"/>
@@ -18,7 +20,7 @@
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Message" positionX="-54" positionY="18" width="128" height="195"/>
+        <element name="Message" positionX="-54" positionY="18" width="128" height="225"/>
         <element name="Student" positionX="-54" positionY="-9" width="128" height="90"/>
     </elements>
 </model>

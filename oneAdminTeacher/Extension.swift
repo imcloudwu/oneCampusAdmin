@@ -25,7 +25,7 @@ extension Connection{
         
         var rsp = self.sendRequest(targetService, bodyContent: bodyContent, &e)
         
-        if e != nil && e.code == "511"{
+        if e != nil{
             self.connect(self.accessPoint, self.targetContract, SecurityToken.createOAuthToken(Global.AccessToken), &error)
             rsp = self.sendRequest(targetService, bodyContent: bodyContent, &e)
         }
@@ -115,3 +115,19 @@ public func ==(a: NSDate, b: NSDate) -> Bool {
 }
 
 extension NSDate: Comparable { }
+
+//extension JSON {
+//    public var arrayStringValue: [String] {
+//        get {
+//            var value = [String]()
+//            
+//            for elem in arrayValue{
+//                if !elem.stringValue.isEmpty{
+//                    value.append(elem.stringValue)
+//                }
+//            }
+//            
+//            return value
+//        }
+//    }
+//}

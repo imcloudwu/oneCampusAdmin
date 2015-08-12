@@ -33,6 +33,11 @@ class MessageCoreData{
                     managedObject.setValue(msg.IsNew, forKey: "isNew")
                 }
                 
+                //已經投過票必須要更新
+                if msg.Voted{
+                    managedObject.setValue(msg.Voted, forKey: "voted")
+                }
+                
                 needInsert = false
             }
         }
@@ -53,6 +58,8 @@ class MessageCoreData{
             myObject.setValue(msg.Name, forKey: "name")
             myObject.setValue(msg.IsSender, forKey: "sender")
             myObject.setValue(msg.IsReceiver, forKey: "receiver")
+            myObject.setValue(msg.Type, forKey: "type")
+            myObject.setValue(msg.Voted, forKey: "voted")
         }
         
         managedObjectContext.save(nil)
@@ -82,8 +89,10 @@ class MessageCoreData{
             let name = obj.valueForKey("name") as! String
             let isSender = obj.valueForKey("sender") as! Bool
             let isReceiver = obj.valueForKey("receiver") as! Bool
+            let type = obj.valueForKey("type") as! String
+            let voted = obj.valueForKey("voted") as! Bool
             
-            retVal.append(MessageItem(id: id, date: date, isNew: isNew, title: title, content: content, redirect: redirect, dsnsName: dsnsName, name: name, isSender: isSender, isReceiver: isReceiver))
+            retVal.append(MessageItem(id: id, date: date, isNew: isNew, title: title, content: content, redirect: redirect, dsnsName: dsnsName, name: name, isSender: isSender, isReceiver: isReceiver, type: type, voted: voted))
             
             //_studentData.append(Student(Photo: UIImage(data: photo), ClassName : class_name, Name: name, Phone: phone))
         }

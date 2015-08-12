@@ -49,7 +49,7 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
         
         ChildTeacherSelector.Teachers = ParentTeacherSelector.Teachers
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "Save")
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "確認", style: UIBarButtonItemStyle.Done, target: self, action: "Save")
         
         SetTitle()
         // Do any additional setup after loading the view, typically from a nib.

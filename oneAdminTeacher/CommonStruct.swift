@@ -63,12 +63,12 @@ class TeacherAccount : Equatable{
         UUID = ""
     }
     
-    init(uuid:String){
-        SchoolName = ""
-        Name = ""
-        Account = ""
-        UUID = uuid
-    }
+//    init(uuid:String){
+//        SchoolName = ""
+//        Name = ""
+//        Account = ""
+//        UUID = uuid
+//    }
 }
 
 func ==(lhs: TeacherAccount, rhs: TeacherAccount) -> Bool {

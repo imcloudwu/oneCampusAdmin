@@ -39,7 +39,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //var centerNav = UINavigationController(rootViewController: centerViewController)
         //var rightNav = UINavigationController(rootViewController: rightViewController)
         
-        centerContainer = MMDrawerController(centerViewController: centerViewController, leftDrawerViewController: leftViewController,rightDrawerViewController:nil)
+        //centerContainer = MMDrawerController(centerViewController: centerViewController, leftDrawerViewController: leftViewController,rightDrawerViewController:nil)
+        
+        centerContainer = MMDrawerController(centerViewController: centerViewController, leftDrawerViewController: leftViewController)
         
         //centerContainer!.openDrawerGestureModeMask = MMOpenDrawerGestureMode.PanningCenterView
         //centerContainer!.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.PanningCenterView | MMCloseDrawerGestureMode.TapCenterView

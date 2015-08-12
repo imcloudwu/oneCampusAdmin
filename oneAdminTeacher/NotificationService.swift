@@ -22,6 +22,8 @@ public class NotificationService{
     
     private static var sendMessageUrl : String = "https://1campus.net/notification/api/post/token/%@"
     
+    private static var replyUrl : String = "https://1campus.net/notification/api/put/%@/reply/token/%@"
+    
     private static var newMessageDelegate : (() -> ())?
     
     private static var mustReload = false
@@ -141,7 +143,7 @@ public class NotificationService{
     }
     
     //發送訊息
-    static func SendMessage(schoolName:String,sender:String,msg:String,receivers:[TeacherAccount],accessToken:String){
+    static func SendMessage(schoolName:String,type:String,sender:String,redirect:String,msg:String,receivers:[TeacherAccount],options:[String],accessToken:String){
         
         var template = ""
         
@@ -160,7 +162,27 @@ public class NotificationService{
             
         }
         
-        let sampleBody = "{\"message\":\"\(msg)\",\"type\":\"normal\",\"sender\":\"\(sender)\",\"redirect\":\"\",\"group\":{\"dsnsname\":\"\(schoolName)\"},\"to\":\(template)}"
+        var optionString = ""
+        var optionTemplate = ""
+        
+        for option in options{
+            if option == options.first{
+                optionString += "["
+            }
+            
+            if option != options.last{
+                optionString += "\"\(option)\","
+            }
+            else{
+                optionString += "\"\(option)\"]"
+            }
+        }
+        
+        if optionString != ""{
+            optionTemplate = ",\"options\": \(optionString)"
+        }
+        
+        let sampleBody = "{\"message\":\"\(msg)\",\"type\":\"\(type)\"\(optionTemplate),\"sender\":\"\(sender)\",\"redirect\":\"\(redirect)\",\"group\":{\"dsnsname\":\"\(schoolName)\"},\"to\":\(template)}"
         
         let url = NSString(format: sendMessageUrl, accessToken)
         
@@ -171,5 +193,25 @@ public class NotificationService{
             //do nothing
             println(error)
         }, prepareCallback: nil)
+    }
+    
+    //回覆問卷
+    static func ReplySingle(msgId:String,accessToken:String,answerIndex:Int){
+        
+        let url = NSString(format: replyUrl, msgId, accessToken)
+        
+        var error : NSError?
+        
+        HttpClient.Put(url as String, body: "{ \"reply\": \(answerIndex) }", err: &error)
+    }
+    
+    //回覆問卷
+    static func ReplyMultiple(msgId:String,accessToken:String,answers:[Int]){
+        
+        let url = NSString(format: replyUrl, msgId, accessToken)
+        
+        var error : NSError?
+        
+        HttpClient.Put(url as String, body: "{ \"reply\": \(answers.description) }", err: &error)
     }
 }
