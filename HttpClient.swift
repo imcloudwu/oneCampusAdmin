@@ -17,6 +17,7 @@ public class HttpClient {
     }
     
     class func Get(url:String, inout err: NSError?) -> NSData? {
+        
         var response: NSURLResponse?
         var error: NSError?
         

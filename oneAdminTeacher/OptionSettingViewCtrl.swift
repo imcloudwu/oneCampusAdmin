@@ -33,7 +33,7 @@ class OptionSettingViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         tableView.delegate = self
         tableView.dataSource = self
         
-        self.navigationItem.title = "進階設定"
+        self.navigationItem.title = "問卷設定"
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "Save")
         

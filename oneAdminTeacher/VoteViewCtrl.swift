@@ -17,14 +17,21 @@ class VoteViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
     
     var Answers = [Int]()
     
+    var CanMultiple = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.delegate = self
         tableView.dataSource = self
         
-        self.navigationItem.title = "進行投票"
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "確認", style: UIBarButtonItemStyle.Done, target: self, action: "Confirm")
+        
+        if MessageData.Type != "single"{
+            CanMultiple = true
+        }
+        
+        self.navigationItem.title = CanMultiple ? "進行投票(可複選)" : "進行投票"
         
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -37,14 +44,20 @@ class VoteViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
     func Confirm(){
         
         if Answers.count > 0{
-            if MessageData.Type == "single"{
-                NotificationService.ReplySingle(MessageData.Id, accessToken: Global.AccessToken, answerIndex: Answers[0])
-                self.navigationController?.popViewControllerAnimated(true)
-            }
-            else{
+            
+            if CanMultiple{
                 NotificationService.ReplyMultiple(MessageData.Id, accessToken: Global.AccessToken, answers: Answers)
                 self.navigationController?.popViewControllerAnimated(true)
             }
+            else{
+                NotificationService.ReplySingle(MessageData.Id, accessToken: Global.AccessToken, answerIndex: Answers[0])
+                self.navigationController?.popViewControllerAnimated(true)
+            }
+            
+            MessageData.Voted = true
+            MessageCoreData.SaveCatchData(MessageData)
+            
+            NotificationService.ExecuteNewMessageDelegate()
         }
         else{
             ShowErrorAlert(self, "錯誤", "必須選擇一個以上的選項")
@@ -78,13 +91,25 @@ class VoteViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
         
         var cell = tableView.cellForRowAtIndexPath(indexPath)
         
-        if let index = find(Answers, indexPath.row){
-            Answers.removeAtIndex(index)
-            cell!.accessoryType = UITableViewCellAccessoryType.None
+        if CanMultiple{
+            if let index = find(Answers, indexPath.row){
+                Answers.removeAtIndex(index)
+                //cell!.accessoryType = UITableViewCellAccessoryType.None
+            }
+            else{
+                Answers.append(indexPath.row)
+                //cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
+            }
+            
+            tableView.reloadData()
         }
         else{
+            
+            Answers.removeAll(keepCapacity: false)
+            
             Answers.append(indexPath.row)
-            cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
+            
+            tableView.reloadData()
         }
     }
     

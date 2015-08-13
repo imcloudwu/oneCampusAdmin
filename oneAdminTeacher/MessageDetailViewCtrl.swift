@@ -8,10 +8,20 @@
 
 import UIKit
 
-class MessageDetailViewCtrl: UIViewController {
+class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource {
     
     var MessageData : MessageItem!
     var SenderMode = false
+    
+    var Options = [String]()
+    var Answers = [Int]()
+    
+    var MustVote = false
+    var CanMultiple = false
+    
+    @IBOutlet weak var VoteTitle: UILabel!
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var VoteFrameView: UIView!
     
     @IBOutlet weak var MessageTitle: UILabel!
     
@@ -28,14 +38,11 @@ class MessageDetailViewCtrl: UIViewController {
     
     @IBOutlet weak var NameHeight: NSLayoutConstraint!
     
+    @IBOutlet weak var TableViewHeight: NSLayoutConstraint!
+    
     @IBAction func StatusBtnClick(sender: AnyObject) {
         self.WatchReaderList()
     }
-    
-//    @IBOutlet weak var ContentBoardView: UIView!
-//    
-//    @IBOutlet weak var SenderLabel: UILabel!
-//    @IBOutlet weak var SenderLabelHeight: NSLayoutConstraint!
     
     var ReadersCatch = [String:String]()
     var ReadList = [String]()
@@ -45,23 +52,66 @@ class MessageDetailViewCtrl: UIViewController {
     
     var _today : String!
     
-    var Options = [String]()
-    
-    var MustVote = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //設為已讀
         NotificationService.SetRead(MessageData.Id, accessToken: Global.AccessToken)
-    
-        if MessageData.Type != "normal"{
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        //判斷是否無投票訊息並設定投票按鈕和取得選項
+        if MessageData.Type == "normal" {
+            VoteFrameView.hidden = true
+            TableViewHeight.constant = 0
+        }
+        else{
             
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Thumb Up Filled-25.png"), style: UIBarButtonItemStyle.Done, target: self, action: "Vote")
+            CanMultiple = MessageData.Type == "multiple" ? true : false
+            VoteTitle.text = CanMultiple ? "選項(可複選):" : "選項:"
             
             GetMessageOptions()
+            
+            if SenderMode{
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "檢視回覆", style: UIBarButtonItemStyle.Done, target: self, action: "ViewChart")
+            }
+            else{
+                
+                //有投過的訊息,按鈕長不一樣
+                if MessageData.Voted{
+                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Starred Ticket Filled-25.png"), style: UIBarButtonItemStyle.Done, target: self, action: "Vote")
+                }
+                else{
+                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Starred Ticket-25.png"), style: UIBarButtonItemStyle.Done, target: self, action: "Vote")
+                }
+                
+            }
+            
         }
         
+        //更新訊息狀態
+        if SenderMode{
+            UpdateMessage()
+        }
+        else{
+            StatusBtn.hidden = true
+            StatusBtnHeight.constant = 0
+            
+//            if MustVote && Options.count > 0{
+//                let alert = UIAlertController(title: "此訊息有投票項目,現在進行投票?", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+//                
+//                alert.addAction(UIAlertAction(title: "下次再說", style: UIAlertActionStyle.Cancel, handler: nil))
+//                
+//                alert.addAction(UIAlertAction(title: "進行投票", style: UIAlertActionStyle.Destructive, handler: { (action1) -> Void in
+//                    self.Vote()
+//                }))
+//                
+//                self.presentViewController(alert, animated: true, completion: nil)
+//            }
+        }
+        
+        //資料初始化
         _dateFormate.dateFormat = "yyyy/MM/dd"
         _timeFormate.dateFormat = "HH:mm"
         
@@ -70,19 +120,8 @@ class MessageDetailViewCtrl: UIViewController {
         let date = _dateFormate.stringFromDate(MessageData.Date)
         
         HyperLink.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "OpenUrl"))
-        //SenderLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "WatchReaderList"))
-        
-        //self.automaticallyAdjustsScrollViewInsets = false
-        
-        //self.navigationController?.navigationBar.topItem?.title = MessageData.Title
-        //self.navigationItem.title = MessageData.Title
         
         MessageTitle.text = MessageData.Title
-        
-//        ContentBoardView.layer.shadowColor = UIColor.blackColor().CGColor
-//        ContentBoardView.layer.shadowOffset = CGSizeZero
-//        ContentBoardView.layer.shadowOpacity = 0.5
-//        ContentBoardView.layer.shadowRadius = 5
         
         DsnsName.text = MessageData.DsnsName
         Name.text = MessageData.Name
@@ -99,28 +138,6 @@ class MessageDetailViewCtrl: UIViewController {
             HyperLinkViewHeight.constant = 0
         }
         
-        if SenderMode{
-            UpdateMessage()
-        }
-        else{
-//            SenderLabel.hidden = true
-//            SenderLabelHeight.constant = 0
-            StatusBtn.hidden = true
-            StatusBtnHeight.constant = 0
-            
-            if MustVote && Options.count > 0{
-                let alert = UIAlertController(title: "此訊息有投票項目,現在進行投票?", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-                
-                alert.addAction(UIAlertAction(title: "下次再說", style: UIAlertActionStyle.Cancel, handler: nil))
-                
-                alert.addAction(UIAlertAction(title: "進行投票", style: UIAlertActionStyle.Destructive, handler: { (action1) -> Void in
-                    self.Vote()
-                }))
-                
-                self.presentViewController(alert, animated: true, completion: nil)
-            }
-        }
-        
         Content.text = MessageData.Content
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -131,6 +148,7 @@ class MessageDetailViewCtrl: UIViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
+        //前一個畫面已經將isNew設定過了,直接儲存
         MessageCoreData.SaveCatchData(MessageData)
     }
     
@@ -138,12 +156,37 @@ class MessageDetailViewCtrl: UIViewController {
         Content.setContentOffset(CGPointMake(0, 0), animated: false)
     }
     
+    func ViewChart(){
+        println("看屁阿...")
+    }
+    
     func Vote(){
-        let voteView = self.storyboard?.instantiateViewControllerWithIdentifier("VoteViewCtrl") as! VoteViewCtrl
-        voteView.Options = Options
-        voteView.MessageData = MessageData
         
-        self.navigationController?.pushViewController(voteView, animated: true)
+        if Answers.count > 0{
+            
+            if CanMultiple{
+                NotificationService.ReplyMultiple(MessageData.Id, accessToken: Global.AccessToken, answers: Answers)
+                self.navigationController?.popViewControllerAnimated(true)
+            }
+            else{
+                NotificationService.ReplySingle(MessageData.Id, accessToken: Global.AccessToken, answerIndex: Answers[0])
+                self.navigationController?.popViewControllerAnimated(true)
+            }
+            
+            MessageData.Voted = true
+            MessageCoreData.SaveCatchData(MessageData)
+            
+            NotificationService.ExecuteNewMessageDelegate()
+        }
+        else{
+            ShowErrorAlert(self, "錯誤", "必須選擇一個以上的選項")
+        }
+        
+//        let voteView = self.storyboard?.instantiateViewControllerWithIdentifier("VoteViewCtrl") as! VoteViewCtrl
+//        voteView.Options = Options
+//        voteView.MessageData = MessageData
+//        
+//        self.navigationController?.pushViewController(voteView, animated: true)
     }
     
     func OpenUrl(){
@@ -210,6 +253,56 @@ class MessageDetailViewCtrl: UIViewController {
         nextView.ReadList = ReadList
         
         self.navigationController?.pushViewController(nextView, animated: true)
+    }
+    
+    //Mark : tableView
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+        return Options.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
+        var cell = tableView.dequeueReusableCellWithIdentifier("voteCell") as? UITableViewCell
+        
+        if cell == nil {
+            cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "voteCell")
+        }
+        
+        cell?.textLabel?.text = Options[indexPath.row]
+        
+        if contains(Answers, indexPath.row){
+            cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
+        }
+        else{
+            cell!.accessoryType = UITableViewCellAccessoryType.None
+        }
+        
+        return cell!
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
+        
+        var cell = tableView.cellForRowAtIndexPath(indexPath)
+        
+        if CanMultiple{
+            if let index = find(Answers, indexPath.row){
+                Answers.removeAtIndex(index)
+                //cell!.accessoryType = UITableViewCellAccessoryType.None
+            }
+            else{
+                Answers.append(indexPath.row)
+                //cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
+            }
+            
+            tableView.reloadData()
+        }
+        else{
+            
+            Answers.removeAll(keepCapacity: false)
+            
+            Answers.append(indexPath.row)
+            
+            tableView.reloadData()
+        }
     }
     
 }

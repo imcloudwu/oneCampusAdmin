@@ -31,7 +31,8 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
     var ViewTitle = "我的訊息"
     
     let MsgIcon = UIImage(named: "Message Filled-32 White.png")
-    let VoteIcon = UIImage(named: "Thumb Up Filled-32.png")
+    let VotedIcon = UIImage(named: "Starred Ticket Filled-32.png")
+    let VoteIcon = UIImage(named: "Starred Ticket-32.png")
     
     @IBOutlet weak var tableView: UITableView!
     var refreshControl : UIRefreshControl!
@@ -194,9 +195,18 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
                 
                 let type = obj["type"].stringValue
                 
+                //有沒有投過票
+                var voted = false
+                if let single = obj["reply"].number {
+                    voted = true
+                }
+                else if let multiple = obj["reply"].array {
+                    voted = true
+                }
+                
                 let newDate = format.dateFromString(dateTime)
                 
-                retVal.append(MessageItem(id: id, date: newDate!, isNew: isNew, title: sender, content: message, redirect: redirect, dsnsName: dsnsname, name: name,isSender: isSender, isReceiver: isReceiver, type: type))
+                retVal.append(MessageItem(id: id, date: newDate!, isNew: isNew, title: sender, content: message, redirect: redirect, dsnsName: dsnsname, name: name,isSender: isSender, isReceiver: isReceiver, type: type, voted: voted))
             }
         }
         
@@ -284,11 +294,11 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
         cell.Date.textColor = data.IsNew ? UIColor(red: 19 / 255, green: 144 / 255, blue: 255 / 255, alpha: 1) : UIColor.lightGrayColor()
         cell.Content.text = data.Content
         
-        if data.Type == "normal" || data.Voted {
+        if data.Type == "normal"{
             cell.Icon.image = MsgIcon
         }
         else{
-            cell.Icon.image = VoteIcon
+            cell.Icon.image = data.Voted ? VotedIcon : VoteIcon
         }
         
         return cell
@@ -350,10 +360,10 @@ class MessageItem : Equatable{
         Voted = voted
     }
     
-    convenience init(id: String, date: NSDate, isNew: Bool, title: String, content: String, redirect: String, dsnsName: String, name: String, isSender: Bool, isReceiver: Bool, type: String) {
-        
-        self.init(id: id, date: date, isNew: isNew, title: title, content: content, redirect: redirect, dsnsName: dsnsName, name: name, isSender: isSender, isReceiver: isReceiver, type: type, voted: false)
-    }
+//    convenience init(id: String, date: NSDate, isNew: Bool, title: String, content: String, redirect: String, dsnsName: String, name: String, isSender: Bool, isReceiver: Bool, type: String) {
+//        
+//        self.init(id: id, date: date, isNew: isNew, title: title, content: content, redirect: redirect, dsnsName: dsnsName, name: name, isSender: isSender, isReceiver: isReceiver, type: type, voted: false)
+//    }
 }
 
 func ==(lhs: MessageItem, rhs: MessageItem) -> Bool {

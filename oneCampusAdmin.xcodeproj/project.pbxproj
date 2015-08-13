@@ -37,6 +37,10 @@
 		613C58811B2AC27D00461072 /* DetailViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613C58801B2AC27D00461072 /* DetailViewCtrl.swift */; };
 		613C58831B2ACDDD00461072 /* Leave Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 613C58821B2ACDDD00461072 /* Leave Filled-50.png */; };
 		613C58851B2AD92100461072 /* Star Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 613C58841B2AD92100461072 /* Star Filled-50.png */; };
+		61553A171B7C6EA900929EBB /* Starred Ticket Filled-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 61553A131B7C6EA900929EBB /* Starred Ticket Filled-32.png */; };
+		61553A191B7C6EA900929EBB /* Starred Ticket-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 61553A151B7C6EA900929EBB /* Starred Ticket-32.png */; };
+		61553A1D1B7C6ED400929EBB /* Starred Ticket Filled-25.png in Resources */ = {isa = PBXBuildFile; fileRef = 61553A1B1B7C6ED400929EBB /* Starred Ticket Filled-25.png */; };
+		61553A1E1B7C6ED400929EBB /* Starred Ticket-25.png in Resources */ = {isa = PBXBuildFile; fileRef = 61553A1C1B7C6ED400929EBB /* Starred Ticket-25.png */; };
 		615BB2581B3BD47F00864052 /* DSUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615BB2571B3BD47F00864052 /* DSUtil.swift */; };
 		615BB25A1B3BD4F800864052 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615BB2591B3BD4F800864052 /* HttpClient.swift */; };
 		615BB25C1B3BD80300864052 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615BB25B1B3BD80300864052 /* Util.swift */; };
@@ -65,8 +69,6 @@
 		61ABA7F71B4FC7C70071F9D4 /* ClassViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61ABA7F61B4FC7C70071F9D4 /* ClassViewCtrl.swift */; };
 		61BA7D841B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BA7D831B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift */; };
 		61C07E5A1B7B305B00B05D20 /* Message Filled-32 White.png in Resources */ = {isa = PBXBuildFile; fileRef = 61C07E581B7B305B00B05D20 /* Message Filled-32 White.png */; };
-		61C07E5B1B7B305B00B05D20 /* Thumb Up Filled-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 61C07E591B7B305B00B05D20 /* Thumb Up Filled-32.png */; };
-		61C07E5D1B7B343000B05D20 /* Thumb Up Filled-25.png in Resources */ = {isa = PBXBuildFile; fileRef = 61C07E5C1B7B343000B05D20 /* Thumb Up Filled-25.png */; };
 		61C07E5F1B7B36BC00B05D20 /* VoteViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C07E5E1B7B36BC00B05D20 /* VoteViewCtrl.swift */; };
 		61C513ED1B5CFD4700921D2A /* CourseScoreViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C513EC1B5CFD4700921D2A /* CourseScoreViewCtrl.swift */; };
 		61C5E58C1B4BDF5E008F1DEF /* CommonStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5E58B1B4BDF5E008F1DEF /* CommonStruct.swift */; };
@@ -148,6 +150,10 @@
 		613C58801B2AC27D00461072 /* DetailViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewCtrl.swift; sourceTree = "<group>"; };
 		613C58821B2ACDDD00461072 /* Leave Filled-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Leave Filled-50.png"; path = "icon/Leave Filled-50.png"; sourceTree = SOURCE_ROOT; };
 		613C58841B2AD92100461072 /* Star Filled-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Star Filled-50.png"; path = "icon/Star Filled-50.png"; sourceTree = SOURCE_ROOT; };
+		61553A131B7C6EA900929EBB /* Starred Ticket Filled-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Starred Ticket Filled-32.png"; path = "icon/Starred Ticket Filled-32.png"; sourceTree = SOURCE_ROOT; };
+		61553A151B7C6EA900929EBB /* Starred Ticket-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Starred Ticket-32.png"; path = "icon/Starred Ticket-32.png"; sourceTree = SOURCE_ROOT; };
+		61553A1B1B7C6ED400929EBB /* Starred Ticket Filled-25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Starred Ticket Filled-25.png"; path = "icon/Starred Ticket Filled-25.png"; sourceTree = SOURCE_ROOT; };
+		61553A1C1B7C6ED400929EBB /* Starred Ticket-25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Starred Ticket-25.png"; path = "icon/Starred Ticket-25.png"; sourceTree = SOURCE_ROOT; };
 		615BB2571B3BD47F00864052 /* DSUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DSUtil.swift; sourceTree = "<group>"; };
 		615BB2591B3BD4F800864052 /* HttpClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
 		615BB25B1B3BD80300864052 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -182,8 +188,6 @@
 		61ABA7F61B4FC7C70071F9D4 /* ClassViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassViewCtrl.swift; sourceTree = "<group>"; };
 		61BA7D831B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTeacherPageViewCtrl.swift; sourceTree = "<group>"; };
 		61C07E581B7B305B00B05D20 /* Message Filled-32 White.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Message Filled-32 White.png"; path = "icon/Message Filled-32 White.png"; sourceTree = SOURCE_ROOT; };
-		61C07E591B7B305B00B05D20 /* Thumb Up Filled-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Thumb Up Filled-32.png"; path = "icon/Thumb Up Filled-32.png"; sourceTree = SOURCE_ROOT; };
-		61C07E5C1B7B343000B05D20 /* Thumb Up Filled-25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Thumb Up Filled-25.png"; path = "icon/Thumb Up Filled-25.png"; sourceTree = SOURCE_ROOT; };
 		61C07E5E1B7B36BC00B05D20 /* VoteViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoteViewCtrl.swift; sourceTree = "<group>"; };
 		61C513EC1B5CFD4700921D2A /* CourseScoreViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CourseScoreViewCtrl.swift; sourceTree = "<group>"; };
 		61C5E58B1B4BDF5E008F1DEF /* CommonStruct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonStruct.swift; sourceTree = "<group>"; };
@@ -276,9 +280,11 @@
 		61E308D21B2A893400BE36D0 /* icon */ = {
 			isa = PBXGroup;
 			children = (
-				61C07E5C1B7B343000B05D20 /* Thumb Up Filled-25.png */,
+				61553A1B1B7C6ED400929EBB /* Starred Ticket Filled-25.png */,
+				61553A1C1B7C6ED400929EBB /* Starred Ticket-25.png */,
+				61553A131B7C6EA900929EBB /* Starred Ticket Filled-32.png */,
+				61553A151B7C6EA900929EBB /* Starred Ticket-32.png */,
 				61C07E581B7B305B00B05D20 /* Message Filled-32 White.png */,
-				61C07E591B7B305B00B05D20 /* Thumb Up Filled-32.png */,
 				61FB5BA91B7074F80006C962 /* Menu 2-26.png */,
 				61E2823B1B6B76A4003DE4B1 /* 1CampusAdminIcon-58.png */,
 				61E2823C1B6B76A4003DE4B1 /* 1CampusAdminIcon-80.png */,
@@ -520,12 +526,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61553A1D1B7C6ED400929EBB /* Starred Ticket Filled-25.png in Resources */,
 				61051F301B57463A00755ED5 /* background3.png in Resources */,
 				6114C8FE1B43A2A800C73E5E /* Courses-32.png in Resources */,
 				61E9D7111B566C0600D36552 /* background2.png in Resources */,
 				6104420C1B44E9FC007D3C98 /* Search Property Filled-32.png in Resources */,
 				610E0A501B53568900186BF3 /* Menu Filled-25.png in Resources */,
 				61E282441B6B76A4003DE4B1 /* 1CampusAdminIcon-180.png in Resources */,
+				61553A1E1B7C6ED400929EBB /* Starred Ticket-25.png in Resources */,
 				610CB0921B5523E80051EC76 /* Age-25.png in Resources */,
 				610CB0931B5523E80051EC76 /* Edit Property-25.png in Resources */,
 				61051F321B57463A00755ED5 /* background5.png in Resources */,
@@ -544,14 +552,14 @@
 				6173AAD31B5791860049EB63 /* Message Filled-32.png in Resources */,
 				61E9D70F1B5656AC00D36552 /* background.png in Resources */,
 				61E308D71B2A997400BE36D0 /* Classroom Filled-50.png in Resources */,
+				61553A191B7C6EA900929EBB /* Starred Ticket-32.png in Resources */,
 				61FEC8EB1B678DE80095C52B /* default photo.jpg in Resources */,
 				61F550901B2A768900E26A5D /* Main.storyboard in Resources */,
 				610B1A751B4CCCA400E3724D /* Paper Filled-50.png in Resources */,
 				61E9D70D1B56513B00D36552 /* Add User-25.png in Resources */,
 				612123ED1B411525000AA07D /* User-100.png in Resources */,
 				61FB5BAA1B7074F80006C962 /* Menu 2-26.png in Resources */,
-				61C07E5D1B7B343000B05D20 /* Thumb Up Filled-25.png in Resources */,
-				61C07E5B1B7B305B00B05D20 /* Thumb Up Filled-32.png in Resources */,
+				61553A171B7C6EA900929EBB /* Starred Ticket Filled-32.png in Resources */,
 				6112A2321B4637F900DA4E77 /* Elective Filled-50.png in Resources */,
 				6173AAD11B5791190049EB63 /* Settings Filled-32.png in Resources */,
 				61FE92E51B58B8BA003BABFE /* Up 4-25.png in Resources */,
