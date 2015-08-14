@@ -13,7 +13,7 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     var MessageData : MessageItem!
     var SenderMode = false
     
-    var Options = [String]()
+    var Options = [VoteItem]()
     var Answers = [Int]()
     
     var MustVote = false
@@ -74,7 +74,7 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
             GetMessageOptions()
             
             if SenderMode{
-                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "檢視回覆", style: UIBarButtonItemStyle.Done, target: self, action: "ViewChart")
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "問卷統計", style: UIBarButtonItemStyle.Done, target: self, action: "ViewChart")
             }
             else{
                 
@@ -157,7 +157,10 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     }
     
     func ViewChart(){
-        println("看屁阿...")
+        let chartView = self.storyboard?.instantiateViewControllerWithIdentifier("ChartViewCtrl") as! ChartViewCtrl
+        chartView.VoteItems = Options
+        
+        self.navigationController?.pushViewController(chartView, animated: true)
     }
     
     func Vote(){
@@ -222,6 +225,14 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
             ReadList.append(reader.stringValue)
         }
         
+        var index = 0
+        for selectedOption in json["progress"]["selectedOptions"].arrayValue{
+            let count = selectedOption.arrayValue.count
+            //兩邊的數量應該一樣,不會發生超出length
+            Options[index].Value = count
+            index++
+        }
+        
         //SenderLabel.text = "已讀 ( \(read) / \(total) )"
         
         StatusBtn.setTitle("已讀: \(read)          未讀: \(total.intValue - read.intValue)", forState: UIControlState.Normal)
@@ -242,7 +253,8 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         }
         
         for option in json["options"].arrayValue{
-            Options.append(option.stringValue)
+            //Options.append(option.stringValue)
+            Options.append(VoteItem(Title: option.stringValue, Value: 0))
         }
     }
     
@@ -267,7 +279,7 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
             cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "voteCell")
         }
         
-        cell?.textLabel?.text = Options[indexPath.row]
+        cell?.textLabel?.text = Options[indexPath.row].Title
         
         if contains(Answers, indexPath.row){
             cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
@@ -305,4 +317,9 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         }
     }
     
+}
+
+struct VoteItem {
+    var Title : String
+    var Value : Int
 }

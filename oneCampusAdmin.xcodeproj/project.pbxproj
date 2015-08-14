@@ -19,6 +19,7 @@
 		610CB0931B5523E80051EC76 /* Edit Property-25.png in Resources */ = {isa = PBXBuildFile; fileRef = 610CB0911B5523E80051EC76 /* Edit Property-25.png */; };
 		610E0A501B53568900186BF3 /* Menu Filled-25.png in Resources */ = {isa = PBXBuildFile; fileRef = 610E0A4D1B53568900186BF3 /* Menu Filled-25.png */; };
 		610E0A541B537AC600186BF3 /* StudentDetailViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610E0A531B537AC600186BF3 /* StudentDetailViewCtrl.swift */; };
+		610ED4311B7DA11E005B4424 /* ChartViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610ED4301B7DA11E005B4424 /* ChartViewCtrl.swift */; };
 		6112A2301B46355300DA4E77 /* SemesterScoreViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6112A22F1B46355300DA4E77 /* SemesterScoreViewCtrl.swift */; };
 		6112A2321B4637F900DA4E77 /* Elective Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 6112A2311B4637F900DA4E77 /* Elective Filled-50.png */; };
 		6114855F1B65EB6000B54BBB /* ic_ischool.png in Resources */ = {isa = PBXBuildFile; fileRef = 6114855E1B65EB6000B54BBB /* ic_ischool.png */; };
@@ -92,6 +93,11 @@
 		61E282431B6B76A4003DE4B1 /* 1CampusAdminIcon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = 61E2823E1B6B76A4003DE4B1 /* 1CampusAdminIcon-120.png */; };
 		61E282441B6B76A4003DE4B1 /* 1CampusAdminIcon-180.png in Resources */ = {isa = PBXBuildFile; fileRef = 61E2823F1B6B76A4003DE4B1 /* 1CampusAdminIcon-180.png */; };
 		61E308D71B2A997400BE36D0 /* Classroom Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 61E308D51B2A997400BE36D0 /* Classroom Filled-50.png */; };
+		61E82D761B7DA7A7001D3DA0 /* PDBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E82D6E1B7DA7A7001D3DA0 /* PDBarChart.swift */; };
+		61E82D771B7DA7A7001D3DA0 /* PDChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E82D6F1B7DA7A7001D3DA0 /* PDChart.swift */; };
+		61E82D781B7DA7A7001D3DA0 /* PDChartAxesComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E82D711B7DA7A7001D3DA0 /* PDChartAxesComponent.swift */; };
+		61E82D791B7DA7A7001D3DA0 /* PDLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E82D731B7DA7A7001D3DA0 /* PDLineChart.swift */; };
+		61E82D7A1B7DA7A7001D3DA0 /* PDPieChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E82D751B7DA7A7001D3DA0 /* PDPieChart.swift */; };
 		61E9D70D1B56513B00D36552 /* Add User-25.png in Resources */ = {isa = PBXBuildFile; fileRef = 61E9D70C1B56513B00D36552 /* Add User-25.png */; };
 		61E9D70F1B5656AC00D36552 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 61E9D70E1B5656AC00D36552 /* background.png */; };
 		61E9D7111B566C0600D36552 /* background2.png in Resources */ = {isa = PBXBuildFile; fileRef = 61E9D7101B566C0600D36552 /* background2.png */; };
@@ -132,6 +138,7 @@
 		610CB0911B5523E80051EC76 /* Edit Property-25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Edit Property-25.png"; path = "icon/Edit Property-25.png"; sourceTree = SOURCE_ROOT; };
 		610E0A4D1B53568900186BF3 /* Menu Filled-25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Menu Filled-25.png"; path = "icon/Menu Filled-25.png"; sourceTree = SOURCE_ROOT; };
 		610E0A531B537AC600186BF3 /* StudentDetailViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentDetailViewCtrl.swift; sourceTree = "<group>"; };
+		610ED4301B7DA11E005B4424 /* ChartViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartViewCtrl.swift; sourceTree = "<group>"; };
 		6112A22F1B46355300DA4E77 /* SemesterScoreViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemesterScoreViewCtrl.swift; sourceTree = "<group>"; };
 		6112A2311B4637F900DA4E77 /* Elective Filled-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Elective Filled-50.png"; path = "icon/Elective Filled-50.png"; sourceTree = SOURCE_ROOT; };
 		6114855E1B65EB6000B54BBB /* ic_ischool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_ischool.png; path = icon/ic_ischool.png; sourceTree = SOURCE_ROOT; };
@@ -211,6 +218,11 @@
 		61E2823E1B6B76A4003DE4B1 /* 1CampusAdminIcon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "1CampusAdminIcon-120.png"; path = "icon/sizes/1CampusAdminIcon-120.png"; sourceTree = SOURCE_ROOT; };
 		61E2823F1B6B76A4003DE4B1 /* 1CampusAdminIcon-180.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "1CampusAdminIcon-180.png"; path = "icon/sizes/1CampusAdminIcon-180.png"; sourceTree = SOURCE_ROOT; };
 		61E308D51B2A997400BE36D0 /* Classroom Filled-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Classroom Filled-50.png"; path = "icon/Classroom Filled-50.png"; sourceTree = SOURCE_ROOT; };
+		61E82D6E1B7DA7A7001D3DA0 /* PDBarChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDBarChart.swift; sourceTree = "<group>"; };
+		61E82D6F1B7DA7A7001D3DA0 /* PDChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDChart.swift; sourceTree = "<group>"; };
+		61E82D711B7DA7A7001D3DA0 /* PDChartAxesComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDChartAxesComponent.swift; sourceTree = "<group>"; };
+		61E82D731B7DA7A7001D3DA0 /* PDLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDLineChart.swift; sourceTree = "<group>"; };
+		61E82D751B7DA7A7001D3DA0 /* PDPieChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDPieChart.swift; sourceTree = "<group>"; };
 		61E9D70C1B56513B00D36552 /* Add User-25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Add User-25.png"; path = "icon/Add User-25.png"; sourceTree = SOURCE_ROOT; };
 		61E9D70E1B5656AC00D36552 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background.png; path = image/background.png; sourceTree = SOURCE_ROOT; };
 		61E9D7101B566C0600D36552 /* background2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background2.png; path = image/background2.png; sourceTree = SOURCE_ROOT; };
@@ -319,9 +331,54 @@
 			name = icon;
 			sourceTree = "<group>";
 		};
+		61E82D6C1B7DA7A7001D3DA0 /* PDChart */ = {
+			isa = PBXGroup;
+			children = (
+				61E82D6D1B7DA7A7001D3DA0 /* PDBarChart */,
+				61E82D6F1B7DA7A7001D3DA0 /* PDChart.swift */,
+				61E82D701B7DA7A7001D3DA0 /* PDChartComponent */,
+				61E82D721B7DA7A7001D3DA0 /* PDLineChart */,
+				61E82D741B7DA7A7001D3DA0 /* PDPieChart */,
+			);
+			path = PDChart;
+			sourceTree = "<group>";
+		};
+		61E82D6D1B7DA7A7001D3DA0 /* PDBarChart */ = {
+			isa = PBXGroup;
+			children = (
+				61E82D6E1B7DA7A7001D3DA0 /* PDBarChart.swift */,
+			);
+			path = PDBarChart;
+			sourceTree = "<group>";
+		};
+		61E82D701B7DA7A7001D3DA0 /* PDChartComponent */ = {
+			isa = PBXGroup;
+			children = (
+				61E82D711B7DA7A7001D3DA0 /* PDChartAxesComponent.swift */,
+			);
+			path = PDChartComponent;
+			sourceTree = "<group>";
+		};
+		61E82D721B7DA7A7001D3DA0 /* PDLineChart */ = {
+			isa = PBXGroup;
+			children = (
+				61E82D731B7DA7A7001D3DA0 /* PDLineChart.swift */,
+			);
+			path = PDLineChart;
+			sourceTree = "<group>";
+		};
+		61E82D741B7DA7A7001D3DA0 /* PDPieChart */ = {
+			isa = PBXGroup;
+			children = (
+				61E82D751B7DA7A7001D3DA0 /* PDPieChart.swift */,
+			);
+			path = PDPieChart;
+			sourceTree = "<group>";
+		};
 		61F5507A1B2A768900E26A5D = {
 			isa = PBXGroup;
 			children = (
+				61E82D6C1B7DA7A7001D3DA0 /* PDChart */,
 				61CA69351B5E5D27002D2842 /* Bolts.framework */,
 				61CA69361B5E5D27002D2842 /* Parse.framework */,
 				61CA69371B5E5D27002D2842 /* ParseCrashReporting.framework */,
@@ -390,6 +447,7 @@
 				61DC99361B7351B800C6BA66 /* WatchReaderListViewCtrl.swift */,
 				61A644EC1B79EDC000AC0D97 /* OptionSettingViewCtrl.swift */,
 				61A644EE1B79F12700AC0D97 /* OptionEditViewCtrl.swift */,
+				610ED4301B7DA11E005B4424 /* ChartViewCtrl.swift */,
 				61C07E5E1B7B36BC00B05D20 /* VoteViewCtrl.swift */,
 				6189CFA61B3D43B00098AAD7 /* SchoolOptionsView.swift */,
 				613C58801B2AC27D00461072 /* DetailViewCtrl.swift */,
@@ -588,6 +646,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				610ED4311B7DA11E005B4424 /* ChartViewCtrl.swift in Sources */,
 				61ABA7F21B4FB88B0071F9D4 /* MMDrawerVisualState.m in Sources */,
 				61C513ED1B5CFD4700921D2A /* CourseScoreViewCtrl.swift in Sources */,
 				61763E3A1B2ECD3A004A0DCD /* oneAdminTeacher.xcdatamodeld in Sources */,
@@ -618,13 +677,18 @@
 				610C7EFD1B61E0B7001F7C4E /* KeyChain.swift in Sources */,
 				619EA1D81B5F8F4500EE4BE7 /* MessageDetailViewCtrl.swift in Sources */,
 				61076A5D1B5F3E5A00A0CC4C /* MessageViewCtrl.swift in Sources */,
+				61E82D781B7DA7A7001D3DA0 /* PDChartAxesComponent.swift in Sources */,
 				61A644EF1B79F12700AC0D97 /* OptionEditViewCtrl.swift in Sources */,
 				615BB25C1B3BD80300864052 /* Util.swift in Sources */,
+				61E82D791B7DA7A7001D3DA0 /* PDLineChart.swift in Sources */,
 				613B68501B6F4FDF0069637F /* OutboxSendViewCtrl.swift in Sources */,
 				612123F31B412BBB000AA07D /* StudentInfoViewCtrl.swift in Sources */,
 				61ABA7F71B4FC7C70071F9D4 /* ClassViewCtrl.swift in Sources */,
+				61E82D771B7DA7A7001D3DA0 /* PDChart.swift in Sources */,
 				613C58811B2AC27D00461072 /* DetailViewCtrl.swift in Sources */,
 				61ABA7F51B4FB92C0071F9D4 /* SideMenuViewCtrl.swift in Sources */,
+				61E82D7A1B7DA7A7001D3DA0 /* PDPieChart.swift in Sources */,
+				61E82D761B7DA7A7001D3DA0 /* PDBarChart.swift in Sources */,
 				613C58791B2AB1CE00461072 /* CustomCell.swift in Sources */,
 				61BA7D841B70B3CC00C3CA48 /* SelectTeacherPageViewCtrl.swift in Sources */,
 				610E0A541B537AC600186BF3 /* StudentDetailViewCtrl.swift in Sources */,

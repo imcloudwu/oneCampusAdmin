@@ -315,6 +315,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
         let cell = tableView.dequeueReusableCellWithIdentifier("ClassCell") as! ClassCell
         cell.ClassName.text = data.ClassName
         cell.Major.text = data.Major
+        cell.ClassId = data.ID
         
 //        if data.Major == "導師"{
 //            cell.ClassIcon.backgroundColor = redColor
@@ -331,6 +332,13 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
         else{
             cell.ClassIcon.text = ""
         }
+        
+        //UILongPressGestureRecognizer
+        cell.tag = indexPath.row
+        var longPress = UILongPressGestureRecognizer(target: self, action: "LongPress:")
+        longPress.minimumPressDuration = 1.0
+        
+        cell.addGestureRecognizer(longPress)
         
         return cell
     }
@@ -352,6 +360,30 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
         }
         
         return 60
+    }
+    
+    func LongPress(sender:UILongPressGestureRecognizer){
+        if sender.state == UIGestureRecognizerState.Began{
+            var cell = sender.view as! ClassCell
+            
+            let menu = UIAlertController(title: "要對 \(cell.ClassName.text) 發送訊息嗎?", message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+            
+            menu.addAction(UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil))
+            
+            menu.addAction(UIAlertAction(title: "給班導師", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                println("給班導師 \(cell.ClassId)")
+            }))
+            
+            menu.addAction(UIAlertAction(title: "給家長們", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                println("給家長們 \(cell.ClassId)")
+            }))
+            
+            self.presentViewController(menu, animated: true, completion: nil)
+            
+        }
+        else{
+            println("...")
+        }
     }
 }
 

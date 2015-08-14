@@ -1260,36 +1260,48 @@
             </objects>
             <point key="canvasLocation" x="-379" y="4075"/>
         </scene>
-        <!--Vote View Ctrl-->
-        <scene sceneID="ubh-iN-HsP">
+        <!--Chart View Ctrl-->
+        <scene sceneID="cds-52-P7h">
             <objects>
-                <viewController storyboardIdentifier="VoteViewCtrl" id="zby-7X-e4x" customClass="VoteViewCtrl" customModule="oneCampusAdmin" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChartViewCtrl" id="a9E-qC-z90" customClass="ChartViewCtrl" customModule="oneCampusAdmin" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="ix6-0i-IEu"/>
-                        <viewControllerLayoutGuide type="bottom" id="XyZ-zZ-ULA"/>
+                        <viewControllerLayoutGuide type="top" id="yEt-Hs-eM5"/>
+                        <viewControllerLayoutGuide type="bottom" id="NrP-aJ-Xup"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="dLs-ba-CYP">
+                    <view key="view" contentMode="scaleToFill" id="jWt-QL-OZV">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="FFz-Kv-f0e">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cC3-ER-xaa">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="300"/>
+                                <color key="backgroundColor" red="0.0" green="0.58823529409999997" blue="0.53333333329999999" alpha="0.14999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="300" id="1gW-rb-fs5"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="iR6-Eb-0qr">
+                                <rect key="frame" x="0.0" y="300" width="600" height="300"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="FFz-Kv-f0e" secondAttribute="trailing" constant="-16" id="5yb-GN-6E0"/>
-                            <constraint firstItem="FFz-Kv-f0e" firstAttribute="top" secondItem="dLs-ba-CYP" secondAttribute="topMargin" id="F3S-vx-5ks"/>
-                            <constraint firstItem="XyZ-zZ-ULA" firstAttribute="top" secondItem="FFz-Kv-f0e" secondAttribute="bottom" id="I7U-lX-ahD"/>
-                            <constraint firstItem="FFz-Kv-f0e" firstAttribute="leading" secondItem="dLs-ba-CYP" secondAttribute="leadingMargin" constant="-16" id="b95-o3-kZC"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="cC3-ER-xaa" secondAttribute="trailing" constant="-16" id="5sl-Zn-7zW"/>
+                            <constraint firstItem="NrP-aJ-Xup" firstAttribute="top" secondItem="iR6-Eb-0qr" secondAttribute="bottom" id="9OE-HE-4u9"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="iR6-Eb-0qr" secondAttribute="trailing" constant="-16" id="jLm-SS-qYj"/>
+                            <constraint firstItem="iR6-Eb-0qr" firstAttribute="top" secondItem="cC3-ER-xaa" secondAttribute="bottom" id="tOd-dB-saK"/>
+                            <constraint firstItem="cC3-ER-xaa" firstAttribute="top" secondItem="jWt-QL-OZV" secondAttribute="topMargin" id="xjK-lK-DsB"/>
+                            <constraint firstItem="cC3-ER-xaa" firstAttribute="leading" secondItem="jWt-QL-OZV" secondAttribute="leadingMargin" constant="-16" id="yc3-C0-Moc"/>
+                            <constraint firstItem="iR6-Eb-0qr" firstAttribute="leading" secondItem="jWt-QL-OZV" secondAttribute="leadingMargin" constant="-16" id="zwN-h2-c3C"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <connections>
-                        <outlet property="tableView" destination="FFz-Kv-f0e" id="XFq-rY-AsG"/>
+                        <outlet property="ChartView" destination="cC3-ER-xaa" id="NqD-Bm-xvM"/>
+                        <outlet property="tableView" destination="iR6-Eb-0qr" id="uOx-v2-n7N"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="scM-gw-zzo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="g2d-Ty-6fH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-379" y="4736"/>
         </scene>

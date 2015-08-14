@@ -91,6 +91,8 @@ class ClassCell : UITableViewCell{
     @IBOutlet weak var ClassName: UILabel!
     @IBOutlet weak var Major: UILabel!
     
+    var ClassId = ""
+    
     override func awakeFromNib() {
 //        ClassIcon.layer.cornerRadius = 5
 //        ClassIcon.layer.masksToBounds = true

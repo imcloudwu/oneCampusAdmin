@@ -182,7 +182,10 @@ public class NotificationService{
             optionTemplate = ",\"options\": \(optionString)"
         }
         
-        let sampleBody = "{\"message\":\"\(msg)\",\"type\":\"\(type)\"\(optionTemplate),\"sender\":\"\(sender)\",\"redirect\":\"\(redirect)\",\"group\":{\"dsnsname\":\"\(schoolName)\"},\"to\":\(template)}"
+        //字串取代
+        var replace_msg = msg.stringByReplacingOccurrencesOfString("\n",withString: "\\n")
+        
+        let sampleBody = "{\"message\":\"\(replace_msg)\",\"type\":\"\(type)\"\(optionTemplate),\"sender\":\"\(sender)\",\"redirect\":\"\(redirect)\",\"group\":{\"dsnsname\":\"\(schoolName)\"},\"to\":\(template)}"
         
         let url = NSString(format: sendMessageUrl, accessToken)
         
