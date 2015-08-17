@@ -14,6 +14,8 @@ class StudentCell : UITableViewCell{
     @IBOutlet weak var Label1: UILabel!
     @IBOutlet weak var Label2: UILabel!
     
+    var student : Student!
+    
     override func awakeFromNib() {
         Photo.layer.cornerRadius = Photo.frame.size.width / 2
         Photo.layer.masksToBounds = true
@@ -91,7 +93,7 @@ class ClassCell : UITableViewCell{
     @IBOutlet weak var ClassName: UILabel!
     @IBOutlet weak var Major: UILabel!
     
-    var ClassId = ""
+    var classItem : ClassItem!
     
     override func awakeFromNib() {
 //        ClassIcon.layer.cornerRadius = 5

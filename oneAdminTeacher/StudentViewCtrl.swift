@@ -59,6 +59,15 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         cell.Photo.image = _displayData[indexPath.row].Photo
         cell.Label1.text = "\(_displayData[indexPath.row].Name)"
         cell.Label2.text = _displayData[indexPath.row].SeatNo == "" ? "" : "座號: \(_displayData[indexPath.row].SeatNo) "
+        
+        cell.student = _displayData[indexPath.row]
+        
+        //UILongPressGestureRecognizer
+        var longPress = UILongPressGestureRecognizer(target: self, action: "LongPress:")
+        longPress.minimumPressDuration = 0.5
+        
+        cell.addGestureRecognizer(longPress)
+        
         return  cell
     }
     
@@ -194,6 +203,63 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         }
         
         return decodedimage ?? defaultImg
+    }
+    
+    func LongPress(sender:UILongPressGestureRecognizer){
+        
+        if sender.state == UIGestureRecognizerState.Began{
+            var cell = sender.view as! StudentCell
+            
+            let menu = UIAlertController(title: "要對 \(cell.student.Name) 的家長發送訊息嗎?", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            menu.addAction(UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil))
+            
+            menu.addAction(UIAlertAction(title: "是", style: UIAlertActionStyle.Destructive, handler: { (action) -> Void in
+                self.SendMessageToClassParents(cell)
+            }))
+            
+            self.presentViewController(menu, animated: true, completion: nil)
+        }
+    }
+    
+    func SendMessageToClassParents(cell : StudentCell){
+        
+        var err : DSFault!
+        let con = GetCommonConnect(cell.student.DSNS)
+        
+        var rsp = con.sendRequest("main.GetParent", bodyContent: "<Request><StudentID>\(cell.student.ID)</StudentID></Request>", &err)
+        
+        if err != nil{
+            ShowErrorAlert(self, "錯誤", err.message)
+        }
+        else{
+            var nserr : NSError?
+            
+            var xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+            
+            var parentAccounts = [TeacherAccount]()
+            
+            if let parents = xml?.root["Response"]["Parent"].all {
+                for parent in parents{
+                    let studentName = parent["StudentName"].stringValue
+                    let studentID = parent["StudentID"].stringValue
+                    let parentAccount = parent["ParentAccount"].stringValue
+                    let className = parent["ClassName"].stringValue
+                    let relationship = parent["Relationship"].stringValue
+                    
+                    var pa = TeacherAccount(schoolName: "", name: studentName + "(" + relationship + ")", account: parentAccount)
+                    parentAccounts.append(pa)
+                }
+            }
+            
+            SetTeachersUUID(parentAccounts)
+            
+            let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("OutboxSendViewCtrl") as! OutboxSendViewCtrl
+            nextView.MyTeacherSelector.Teachers = parentAccounts
+            nextView.DataBase = parentAccounts
+            
+            self.navigationController?.pushViewController(nextView, animated: true)
+        }
     }
     
 }

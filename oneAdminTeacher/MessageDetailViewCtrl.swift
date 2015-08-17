@@ -38,7 +38,10 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     
     @IBOutlet weak var NameHeight: NSLayoutConstraint!
     
-    @IBOutlet weak var TableViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var TextViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var VoteFrameHeight: NSLayoutConstraint!
+    
+    //@IBOutlet weak var TableViewHeight: NSLayoutConstraint!
     
     @IBAction func StatusBtnClick(sender: AnyObject) {
         self.WatchReaderList()
@@ -64,7 +67,7 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         //判斷是否無投票訊息並設定投票按鈕和取得選項
         if MessageData.Type == "normal" {
             VoteFrameView.hidden = true
-            TableViewHeight.constant = 0
+            //TableViewHeight.constant = 0
         }
         else{
             
@@ -139,6 +142,9 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         }
         
         Content.text = MessageData.Content
+        
+        //TextViewHeight.constant = frame.size.height
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -154,6 +160,27 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     
     override func viewDidAppear(animated: Bool) {
         Content.setContentOffset(CGPointMake(0, 0), animated: false)
+        
+        let bestSize = Content.sizeThatFits(Content.bounds.size)
+        TextViewHeight.constant = bestSize.height
+        
+        VoteFrameHeight.constant = CGFloat(Float(Options.count)) * 40 + 100
+    }
+    
+    override func willMoveToParentViewController(parent: UIViewController?) {
+        GoBack()
+    }
+    
+    func GoBack(){
+        
+        if MustVote{
+            
+            let alarm = UIAlertController(title: "提醒您此訊息尚未進行投票回覆", message: "", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alarm.addAction(UIAlertAction(title: "朕知道了", style: UIAlertActionStyle.Cancel, handler: nil))
+            
+            self.presentViewController(alarm, animated: true, completion: nil)
+        }
     }
     
     func ViewChart(){
@@ -166,6 +193,8 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     func Vote(){
         
         if Answers.count > 0{
+            
+            MustVote = false
             
             if CanMultiple{
                 NotificationService.ReplyMultiple(MessageData.Id, accessToken: Global.AccessToken, answers: Answers)

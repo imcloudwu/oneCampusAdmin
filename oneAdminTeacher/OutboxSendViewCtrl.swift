@@ -26,6 +26,8 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
     
     var KeyBoardHeight : CGFloat = 0
     
+    var DataBase : [TeacherAccount]!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -54,15 +56,15 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
         }
             
         if SchoolName.text.isEmpty{
-            SchoolName.text = Global.MySchoolList.count > 0 ? Global.MySchoolList[0] : ""
+            SchoolName.text = Global.MySchoolList.count > 0 ? Global.MySchoolList[0].Name : ""
         }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: "SelectTeacher")
         Receiver.addGestureRecognizer(tapGesture)
         
-        let longPress = UILongPressGestureRecognizer(target: self, action: "ClearReceivers")
-        longPress.minimumPressDuration = 1.0
-        Receiver.addGestureRecognizer(longPress)
+        let receiversPress = UILongPressGestureRecognizer(target: self, action: "ClearReceivers")
+        receiversPress.minimumPressDuration = 1.0
+        Receiver.addGestureRecognizer(receiversPress)
         
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -85,6 +87,8 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
         
         let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("SelectTeacherPageViewCtrl") as! SelectTeacherPageViewCtrl
         nextView.ParentTeacherSelector = MyTeacherSelector
+        
+        nextView.DataBase = DataBase == nil ? Global.MyTeacherList : DataBase
         
         self.navigationController?.pushViewController(nextView, animated: true)
     }
@@ -178,6 +182,23 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool{
+        
+        if textField == SchoolName{
+            
+            let autoComplete = UIAlertController(title: "要自動填入學校名稱嗎?", message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+            
+            autoComplete.addAction(UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil))
+            
+            for sn in Global.MySchoolList{
+                
+                autoComplete.addAction(UIAlertAction(title: sn.Name, style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+                    self.SchoolName.text = sn.Name
+                }))
+            }
+            
+            self.presentViewController(autoComplete, animated: true, completion: nil)
+        }
+        
         textField.resignFirstResponder()
         return true
     }
@@ -202,6 +223,8 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
         
         KeyBoardHeight = keyboardSize.height
     }
+    
+    
 }
 
 class TeacherSelector{

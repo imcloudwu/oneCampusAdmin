@@ -20,12 +20,14 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
     
     var DisplayItem : [TeacherAccount]!
     
+    var DataBase = [TeacherAccount]()
+    
     @IBAction func SelectAll(sender: AnyObject) {
         
         if selectAllBtn.titleLabel?.text == "全部選擇"{
             selectAllBtn.setTitle("全部刪除", forState: UIControlState.Normal)
             
-            ChildTeacherSelector.Teachers = Global.MyTeacherList
+            ChildTeacherSelector.Teachers = DataBase
         }
         else{
             selectAllBtn.setTitle("全部選擇", forState: UIControlState.Normal)
@@ -45,7 +47,7 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
         
         searchBar.delegate = self
         
-        DisplayItem = Global.MyTeacherList
+        DisplayItem = DataBase
         
         ChildTeacherSelector.Teachers = ParentTeacherSelector.Teachers
         
@@ -61,7 +63,7 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
     }
     
     func SetTitle(){
-        self.navigationItem.title = "選擇了 \(ChildTeacherSelector.Teachers.count) 位教師"
+        self.navigationItem.title = "選擇了 \(ChildTeacherSelector.Teachers.count) 位"
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
@@ -124,11 +126,11 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         
         if searchText == "" {
-            DisplayItem = Global.MyTeacherList
+            DisplayItem = DataBase
         }
         else{
             
-            var founds = Global.MyTeacherList.filter({ t in
+            var founds = DataBase.filter({ t in
                 
                 if let x = t.Name.lowercaseString.rangeOfString(searchText.lowercaseString){
                     return true

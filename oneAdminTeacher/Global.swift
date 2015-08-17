@@ -29,7 +29,7 @@ public class Global{
     static var Alert : UIAlertController!
     
     static var LastLoginDateTime : NSDate!
-    static var MySchoolList = [String]()
+    static var MySchoolList = [DsnsItem]()
     static var MyTeacherList = [TeacherAccount]()
     
     static var SchoolConnector = [String:Connection]()
@@ -39,7 +39,7 @@ public class Global{
     static func Reset(){
         MyPhoto = nil
         ClassList = nil
-        MySchoolList = [String]()
+        MySchoolList = [DsnsItem]()
         MyTeacherList = [TeacherAccount]()
         SchoolConnector = [String:Connection]()
         
@@ -316,8 +316,10 @@ func GetSchoolName(con:Connection) -> String{
     if let name = xml?.root["Response"]["SchoolName"].first?.stringValue{
         schoolName = name
         
-        if !contains(Global.MySchoolList, schoolName){
-            Global.MySchoolList.append(schoolName)
+        let di = DsnsItem(name: schoolName, accessPoint: con.accessPoint)
+        
+        if !contains(Global.MySchoolList, di){
+            Global.MySchoolList.append(di)
         }
     }
     
@@ -344,6 +346,19 @@ func GetSchoolName(con:Connection) -> String{
     return schoolName
 }
 
+func GetTeacherAccountItem(account:String) -> TeacherAccount?{
+    
+    if !account.isEmpty{
+        for ta in Global.MyTeacherList{
+            if ta.Account == account{
+                return ta
+            }
+        }
+    }
+    
+    return nil
+}
+
 func GetAllTeacherAccount(schoolName:String,con:Connection){
     
     var err : DSFault!
@@ -366,17 +381,17 @@ func GetAllTeacherAccount(schoolName:String,con:Connection){
         }
     }
     
-    SetTeachersUUID()
+    SetTeachersUUID(Global.MyTeacherList)
 }
 
-func SetTeachersUUID(){
+func SetTeachersUUID(source:[TeacherAccount]){
     
     var err : NSError?
     var emailString = ""
     
-    for teacher in Global.MyTeacherList{
+    for teacher in source{
         if teacher.Account != "" , let account = teacher.Account.UrlEncoding{
-            if teacher == Global.MyTeacherList.last{
+            if teacher == source.last{
                 emailString += "%22\(account)%22"
             }
             else{
@@ -387,10 +402,12 @@ func SetTeachersUUID(){
     
     var rsp = HttpClient.Get("https://auth.ischool.com.tw/services/uuidLookup.php?accounts=[\(emailString)]",err: &err)
     
+    //println(NSString(data: rsp!, encoding: NSUTF8StringEncoding))
+    
     //null會是空白字串
     var jsons = JSON(data: rsp!)
     
-    for teacher in Global.MyTeacherList{
+    for teacher in source{
         teacher.UUID = jsons[teacher.Account].stringValue
     }
 }
