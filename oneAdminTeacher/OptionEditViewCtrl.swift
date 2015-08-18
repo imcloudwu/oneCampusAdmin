@@ -46,6 +46,7 @@ class OptionEditViewCtrl: UIViewController,UITextViewDelegate {
     
     override func viewWillAppear(animated: Bool) {
         RegisterForKeyboardNotifications(self)
+        Content.becomeFirstResponder()
     }
     
     override func viewDidDisappear(animated: Bool) {

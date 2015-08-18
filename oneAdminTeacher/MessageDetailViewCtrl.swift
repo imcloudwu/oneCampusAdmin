@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource {
+class MessageDetailViewCtrl: UIViewController{
     
     var MessageData : MessageItem!
     var SenderMode = false
@@ -41,6 +41,12 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     @IBOutlet weak var TextViewHeight: NSLayoutConstraint!
     @IBOutlet weak var VoteFrameHeight: NSLayoutConstraint!
     
+    @IBOutlet weak var ScrollView: UIScrollView!
+    
+    var OptionLabels = [UILabel]()
+    
+    var onceToken: dispatch_once_t = 0
+    
     //@IBOutlet weak var TableViewHeight: NSLayoutConstraint!
     
     @IBAction func StatusBtnClick(sender: AnyObject) {
@@ -58,11 +64,16 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        VoteFrameView.hidden = true
+        
         //設為已讀
         NotificationService.SetRead(MessageData.Id, accessToken: Global.AccessToken)
         
-        tableView.delegate = self
-        tableView.dataSource = self
+        //tableView.delegate = self
+        //tableView.dataSource = self
+        
+        //tableView.estimatedRowHeight = 44.0
+        //tableView.rowHeight = UITableViewAutomaticDimension
         
         //判斷是否無投票訊息並設定投票按鈕和取得選項
         if MessageData.Type == "normal" {
@@ -159,29 +170,111 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     }
     
     override func viewDidAppear(animated: Bool) {
+        
+        dispatch_once(&onceToken) { () -> Void in
+            self.InitUIControl()
+        }
+    }
+    
+    func InitUIControl(){
+        var yPosition : CGFloat = 0.0
+        
         Content.setContentOffset(CGPointMake(0, 0), animated: false)
         
         let bestSize = Content.sizeThatFits(Content.bounds.size)
         TextViewHeight.constant = bestSize.height
         
-        VoteFrameHeight.constant = CGFloat(Float(Options.count)) * 40 + 100
-    }
-    
-    override func willMoveToParentViewController(parent: UIViewController?) {
-        GoBack()
-    }
-    
-    func GoBack(){
+        //VoteFrameHeight.constant = CGFloat(Float(Options.count)) * 40 + 100
+        VoteFrameHeight.constant = 0
         
-        if MustVote{
-            
-            let alarm = UIAlertController(title: "提醒您此訊息尚未進行投票回覆", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-            
-            alarm.addAction(UIAlertAction(title: "朕知道了", style: UIAlertActionStyle.Cancel, handler: nil))
-            
-            self.presentViewController(alarm, animated: true, completion: nil)
+        self.view.layoutIfNeeded()
+        
+        yPosition += Content.bounds.size.height + 30
+        
+        if Options.count > 1{
+            for index in 0...Options.count - 1 {
+                
+                let newLabel = UILabel()
+                newLabel.layer.masksToBounds = true
+                newLabel.layer.cornerRadius = 5
+                newLabel.userInteractionEnabled = true
+                newLabel.tag = index
+                newLabel.numberOfLines = 0
+                newLabel.text = Options[index].Title
+                newLabel.backgroundColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 0.1)
+                newLabel.frame.size.width = Content.frame.size.width
+                newLabel.frame.size.height = 48.0
+                newLabel.frame.origin.x = Content.frame.origin.x
+                newLabel.frame.origin.y = yPosition
+                
+                let bestSize = newLabel.sizeThatFits(CGSizeMake(newLabel.frame.size.width, newLabel.frame.size.height))
+                newLabel.frame.size.height = bestSize.height > 48.0 ? bestSize.height : 48.0
+                
+                yPosition += newLabel.frame.size.height + 10
+                
+                let tapGesture = UITapGestureRecognizer(target: self, action: "TapOption:")
+                newLabel.addGestureRecognizer(tapGesture)
+                
+                OptionLabels.append(newLabel)
+                ScrollView.addSubview(newLabel)
+            }
+        }
+        
+        if yPosition > ScrollView.contentSize.height{
+            ScrollView.contentSize.height = yPosition
         }
     }
+    
+    func TapOption(sender : UITapGestureRecognizer){
+        let view = sender.view as! UILabel
+        //println("u pressed number : \(view.tag) option")
+        
+        if CanMultiple{
+            if let index = find(Answers, view.tag){
+                Answers.removeAtIndex(index)
+                view.text = Options[view.tag].Title
+                //cell!.accessoryType = UITableViewCellAccessoryType.None
+            }
+            else{
+                Answers.append(view.tag)
+                view.text = "✓ " + Options[view.tag].Title
+                //cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
+            }
+        }
+        else{
+            Answers.removeAll(keepCapacity: false)
+            
+            Answers.append(view.tag)
+            
+            for index in 0...Options.count - 1{
+                OptionLabels[index].text = Options[index].Title
+            }
+            
+            view.text = "✓ " + Options[view.tag].Title
+        }
+    }
+    
+//    func GoBack(){
+//
+//        if MustVote && !SenderMode {
+//
+//            let alarm = UIAlertController(title: "提醒您", message: "此訊息尚未進行投票回覆呦", preferredStyle: UIAlertControllerStyle.Alert)
+//            
+//            alarm.addAction(UIAlertAction(title: "朕知道了", style: UIAlertActionStyle.Cancel, handler: nil))
+//            
+//            alarm.addAction(UIAlertAction(title: "下次再說", style: UIAlertActionStyle.Destructive, handler: { (action) -> Void in
+//                self.navigationController?.popViewControllerAnimated(true)
+//            }))
+//            
+//            //alarm.addAction(UIAlertAction(title: "朕知道了", style: UIAlertActionStyle.Default, handler: nil))
+//            
+//            self.presentViewController(alarm, animated: true, completion: nil)
+//        }
+//        else{
+//            self.navigationController?.popViewControllerAnimated(true)
+//        }
+//        
+//    }
     
     func ViewChart(){
         let chartView = self.storyboard?.instantiateViewControllerWithIdentifier("ChartViewCtrl") as! ChartViewCtrl
@@ -283,7 +376,7 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         
         for option in json["options"].arrayValue{
             //Options.append(option.stringValue)
-            Options.append(VoteItem(Title: option.stringValue, Value: 0))
+            Options.append(VoteItem(Title: "  " + option.stringValue, Value: 0))
         }
     }
     
@@ -297,54 +390,56 @@ class MessageDetailViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
     }
     
     //Mark : tableView
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
-        return Options.count
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
-        var cell = tableView.dequeueReusableCellWithIdentifier("voteCell") as? UITableViewCell
-        
-        if cell == nil {
-            cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "voteCell")
-        }
-        
-        cell?.textLabel?.text = Options[indexPath.row].Title
-        
-        if contains(Answers, indexPath.row){
-            cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
-        }
-        else{
-            cell!.accessoryType = UITableViewCellAccessoryType.None
-        }
-        
-        return cell!
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
-        
-        var cell = tableView.cellForRowAtIndexPath(indexPath)
-        
-        if CanMultiple{
-            if let index = find(Answers, indexPath.row){
-                Answers.removeAtIndex(index)
-                //cell!.accessoryType = UITableViewCellAccessoryType.None
-            }
-            else{
-                Answers.append(indexPath.row)
-                //cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
-            }
-            
-            tableView.reloadData()
-        }
-        else{
-            
-            Answers.removeAll(keepCapacity: false)
-            
-            Answers.append(indexPath.row)
-            
-            tableView.reloadData()
-        }
-    }
+//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+//        return Options.count
+//    }
+//    
+//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
+//        var cell = tableView.dequeueReusableCellWithIdentifier("voteCell") as? UITableViewCell
+//        
+//        if cell == nil {
+//            cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "voteCell")
+//            //cell?.textLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
+//            cell?.textLabel?.numberOfLines = 0
+//        }
+//        
+//        cell?.textLabel?.text = Options[indexPath.row].Title
+//        
+//        if contains(Answers, indexPath.row){
+//            cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
+//        }
+//        else{
+//            cell!.accessoryType = UITableViewCellAccessoryType.None
+//        }
+//        
+//        return cell!
+//    }
+//    
+//    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
+//        
+//        var cell = tableView.cellForRowAtIndexPath(indexPath)
+//        
+//        if CanMultiple{
+//            if let index = find(Answers, indexPath.row){
+//                Answers.removeAtIndex(index)
+//                //cell!.accessoryType = UITableViewCellAccessoryType.None
+//            }
+//            else{
+//                Answers.append(indexPath.row)
+//                //cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
+//            }
+//            
+//            tableView.reloadData()
+//        }
+//        else{
+//            
+//            Answers.removeAll(keepCapacity: false)
+//            
+//            Answers.append(indexPath.row)
+//            
+//            tableView.reloadData()
+//        }
+//    }
     
 }
 

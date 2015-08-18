@@ -124,6 +124,16 @@ class OptionCell : UITableViewCell{
     }
 }
 
+class ChartOptionCell : UITableViewCell{
+    
+    @IBOutlet weak var ColorView: UIView!
+    @IBOutlet weak var TitleLabel: UILabel!
+    @IBOutlet weak var ValueLabel: UILabel!
+    
+    override func awakeFromNib() {
+    }
+}
+
 /*
 class AbsentCell : UITableViewCell{
     

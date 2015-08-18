@@ -15,15 +15,26 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
     @IBOutlet weak var ChartView: UIView!
     @IBOutlet weak var tableView: UITableView!
     
+//    var Colors = [
+//        UIColor(red: 69.0 / 255, green: 212.0 / 255, blue: 103.0 / 255, alpha: 1.0),
+//        UIColor(red: 66.0 / 255, green: 187.0 / 255, blue: 102.0 / 255, alpha: 1.0),
+//        UIColor(red: 64.0 / 255, green: 164.0 / 255, blue: 102.0 / 255, alpha: 1.0),
+//        UIColor(red: 0.0 / 255, green: 122.0 / 255, blue: 122.0 / 255, alpha: 1.0),
+//        UIColor(red: 0.0 / 255, green: 148.0 / 255, blue: 148.0 / 255, alpha: 1.0),
+//        UIColor(red: 0.0 / 255, green: 173.0 / 255, blue: 173.0 / 255, alpha: 1.0),
+//        UIColor(red: 0.0 / 255, green: 76.0 / 255, blue: 153.0 / 255, alpha: 1.0),
+//        UIColor(red: 0.0 / 255, green: 89.0 / 255, blue: 179.0 / 255, alpha: 1.0)
+//    ]
+    
     var Colors = [
-        UIColor(red: 69.0 / 255, green: 212.0 / 255, blue: 103.0 / 255, alpha: 1.0),
-        UIColor(red: 66.0 / 255, green: 187.0 / 255, blue: 102.0 / 255, alpha: 1.0),
-        UIColor(red: 64.0 / 255, green: 164.0 / 255, blue: 102.0 / 255, alpha: 1.0),
-        UIColor(red: 0.0 / 255, green: 122.0 / 255, blue: 122.0 / 255, alpha: 1.0),
-        UIColor(red: 0.0 / 255, green: 148.0 / 255, blue: 148.0 / 255, alpha: 1.0),
-        UIColor(red: 0.0 / 255, green: 173.0 / 255, blue: 173.0 / 255, alpha: 1.0),
-        UIColor(red: 0.0 / 255, green: 76.0 / 255, blue: 153.0 / 255, alpha: 1.0),
-        UIColor(red: 0.0 / 255, green: 89.0 / 255, blue: 179.0 / 255, alpha: 1.0)
+        UIColor(red: 244.0 / 255, green: 67.0 / 255, blue: 54.0 / 255, alpha: 1.0),
+        UIColor(red: 255.0 / 255, green: 152.0 / 255, blue: 0.0 / 255, alpha: 1.0),
+        UIColor(red: 76.0 / 255, green: 175.0 / 255, blue: 80.0 / 255, alpha: 1.0),
+        UIColor(red: 30.0 / 255, green: 150.0 / 255, blue: 243.0 / 255, alpha: 1.0),
+        UIColor(red: 92.0 / 255, green: 107.0 / 255, blue: 192.0 / 255, alpha: 1.0),
+        UIColor(red: 156.0 / 255, green: 39.0 / 255, blue: 176.0 / 255, alpha: 1.0),
+        UIColor(red: 255.0 / 255, green: 234.0 / 255, blue: 0.0 / 255, alpha: 1.0),
+        UIColor(red: 0.0 / 255, green: 0.0 / 255, blue: 0.0 / 255, alpha: 1.0)
     ]
     
     override func viewDidLoad() {
@@ -31,6 +42,9 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
         
         tableView.delegate = self
         tableView.dataSource = self
+        
+        tableView.estimatedRowHeight = 44.0
+        tableView.rowHeight = UITableViewAutomaticDimension
         
         self.navigationItem.title = "問卷統計"
         // Do any additional setup after loading the view, typically from a nib.
@@ -70,14 +84,19 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
                 
                 var percentage : Double = Double(vt.Value) / total
                 
+                let round = (percentage.Round(2) * 100).Round(0)
+                
                 if percentage > 0{
-                    items.append(PieDataItem(description: vt.Title, color: Colors[colorIndex], percentage: CGFloat(percentage)))
+                    items.append(PieDataItem(description: "\(round) %", color: Colors[colorIndex], percentage: CGFloat(percentage)))
                 }
             }
             else{
                 
                 var percentage : Double = 1 / Double(VoteItems.count)
-                items.append(PieDataItem(description: vt.Title, color: Colors[colorIndex], percentage: CGFloat(percentage)))
+                
+                let round = (percentage.Round(2) * 100).Round(0)
+                
+                items.append(PieDataItem(description: "\(round) %", color: Colors[colorIndex], percentage: CGFloat(percentage)))
             }
             
             index++
@@ -99,16 +118,22 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
-        var cell = tableView.dequeueReusableCellWithIdentifier("chartCell") as? UITableViewCell
         
-        if cell == nil{
-            cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "chartCell")
-        }
+        var cell = tableView.dequeueReusableCellWithIdentifier("ChartOptionCell") as! ChartOptionCell
         
-        cell?.textLabel?.text = VoteItems[indexPath.row].Title
-        cell?.detailTextLabel?.text = "\(VoteItems[indexPath.row].Value)"
+//        if cell == nil{
+//            cell = UITableViewCell(style: UITableViewCellStyle.Value2, reuseIdentifier: "chartCell")
+//            cell?.textLabel?.numberOfLines = 0
+//        }
         
-        return cell!
+        cell.ColorView.backgroundColor = Colors[indexPath.row % 8]
+        cell.TitleLabel.text = VoteItems[indexPath.row].Title
+        cell.ValueLabel.text = "\(VoteItems[indexPath.row].Value) 票"
+        
+//        cell?.textLabel?.text = VoteItems[indexPath.row].Title
+//        cell?.detailTextLabel?.text = "\(VoteItems[indexPath.row].Value)"
+        
+        return cell
     }
     
 }

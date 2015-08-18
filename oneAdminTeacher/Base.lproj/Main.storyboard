@@ -1261,6 +1261,7 @@
                         <outlet property="MessageTitle" destination="tSV-e9-H2s" id="NcC-b9-OcR"/>
                         <outlet property="Name" destination="gPu-fi-F4a" id="9A9-TV-cGt"/>
                         <outlet property="NameHeight" destination="6Lq-Xe-ToU" id="8eP-kn-oPd"/>
+                        <outlet property="ScrollView" destination="UVR-CP-OgU" id="aOZ-NJ-0Bg"/>
                         <outlet property="StatusBtn" destination="9BJ-qD-QEr" id="lkP-dn-9au"/>
                         <outlet property="StatusBtnHeight" destination="sBZ-Zg-Ty5" id="oVV-fC-Epc"/>
                         <outlet property="TextViewHeight" destination="lIW-fB-lAt" id="bTV-fc-p33"/>
@@ -1293,9 +1294,59 @@
                                     <constraint firstAttribute="height" constant="300" id="1gW-rb-fs5"/>
                                 </constraints>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="iR6-Eb-0qr">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="75" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="iR6-Eb-0qr">
                                 <rect key="frame" x="0.0" y="300" width="600" height="300"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChartOptionCell" rowHeight="75" id="sV6-Ve-Jhn" customClass="ChartOptionCell" customModule="oneCampusAdmin" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sV6-Ve-Jhn" id="l2Q-U5-lSN">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fTX-vZ-Dwc">
+                                                    <rect key="frame" x="0.0" y="0.0" width="19" height="74"/>
+                                                    <color key="backgroundColor" red="1" green="0.91764705882352937" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="19" id="c6W-pD-TLa"/>
+                                                    </constraints>
+                                                </view>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WHn-5E-ORV">
+                                                    <rect key="frame" x="27" y="8" width="514" height="58"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9999 票" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kRb-tc-Fqv">
+                                                    <rect key="frame" x="549" y="8" width="43" height="58"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="43" id="O9V-0g-0oq"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="WHn-5E-ORV" firstAttribute="top" secondItem="l2Q-U5-lSN" secondAttribute="topMargin" id="B1k-Pg-2fH"/>
+                                                <constraint firstItem="kRb-tc-Fqv" firstAttribute="top" secondItem="l2Q-U5-lSN" secondAttribute="topMargin" id="FUb-Q5-jK7"/>
+                                                <constraint firstItem="kRb-tc-Fqv" firstAttribute="bottom" secondItem="l2Q-U5-lSN" secondAttribute="bottomMargin" id="Lyh-0F-kB2"/>
+                                                <constraint firstItem="kRb-tc-Fqv" firstAttribute="trailing" secondItem="l2Q-U5-lSN" secondAttribute="trailingMargin" id="QcQ-VO-SZ4"/>
+                                                <constraint firstItem="fTX-vZ-Dwc" firstAttribute="top" secondItem="l2Q-U5-lSN" secondAttribute="topMargin" constant="-8" id="UZx-SB-VcS"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="fTX-vZ-Dwc" secondAttribute="bottom" constant="-8" id="WEQ-2s-GCk"/>
+                                                <constraint firstItem="WHn-5E-ORV" firstAttribute="leading" secondItem="fTX-vZ-Dwc" secondAttribute="trailing" constant="8" id="fbG-Se-4xy"/>
+                                                <constraint firstItem="WHn-5E-ORV" firstAttribute="bottom" secondItem="l2Q-U5-lSN" secondAttribute="bottomMargin" id="g5c-o6-nTt"/>
+                                                <constraint firstItem="kRb-tc-Fqv" firstAttribute="leading" secondItem="WHn-5E-ORV" secondAttribute="trailing" constant="8" id="n3b-Es-OWG"/>
+                                                <constraint firstItem="fTX-vZ-Dwc" firstAttribute="leading" secondItem="l2Q-U5-lSN" secondAttribute="leadingMargin" constant="-8" id="zmi-0I-e3d"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="ColorView" destination="fTX-vZ-Dwc" id="DHM-WK-CRb"/>
+                                            <outlet property="TitleLabel" destination="WHn-5E-ORV" id="gcT-4B-11W"/>
+                                            <outlet property="ValueLabel" destination="kRb-tc-Fqv" id="CnS-8E-hBj"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
