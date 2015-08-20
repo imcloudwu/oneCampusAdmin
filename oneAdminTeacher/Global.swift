@@ -304,7 +304,7 @@ func RenewRefreshToken(refreshToken:String){
 //new solution
 func GetSchoolName(con:Connection) -> String{
     
-    var schoolName = ""
+    var schoolName = con.accessPoint
     
     var error : DSFault!
     var nserr : NSError?

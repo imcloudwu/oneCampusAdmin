@@ -67,7 +67,10 @@ class MessageDetailViewCtrl: UIViewController{
             
             UpdateMessage()
             
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "問卷統計", style: UIBarButtonItemStyle.Done, target: self, action: "ViewChart")
+            if MessageData.Type != "normal"{
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "問卷統計", style: UIBarButtonItemStyle.Done, target: self, action: "ViewChart")
+            }
+            
         }
         else{
             

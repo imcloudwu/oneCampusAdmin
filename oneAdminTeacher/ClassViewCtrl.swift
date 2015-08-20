@@ -20,6 +20,8 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
     //var progressTimer : ProgressTimer!
     var refreshControl : UIRefreshControl!
     
+    var switchBtn : UIBarButtonItem!
+    
     var _ClassList = [ClassItem]()
     var _DisplayDatas = [ClassItem]()
     var _CurrentDatas = [ClassItem]()
@@ -34,6 +36,8 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         super.viewDidLoad()
         
         searchBar.delegate = self
+        
+        switchBtn = UIBarButtonItem(title: "快速切換", style: UIBarButtonItemStyle.Done, target: self, action: "FastSwitch")
         
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "")
@@ -71,13 +75,16 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
             GetMyClassList()
         }
         
-        if Global.MySchoolList.count > 1 {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "快速切換", style: UIBarButtonItemStyle.Done, target: self, action: "FastSwitch")
+        SetSwitchBtn()
+    }
+    
+    func SetSwitchBtn(){
+        if Global.MySchoolList.count >= 2{
+            self.navigationItem.rightBarButtonItem = switchBtn
         }
         else{
             self.navigationItem.rightBarButtonItem = nil
         }
-        
     }
     
     func FastSwitch(){
@@ -175,6 +182,8 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
                     self._DisplayDatas = self._ClassList
                     self._CurrentDatas = self._DisplayDatas
                     self.tableView.reloadData()
+                    
+                    self.SetSwitchBtn()
                 })
             })
         }
