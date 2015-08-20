@@ -381,7 +381,7 @@ func GetAllTeacherAccount(schoolName:String,con:Connection){
         }
     }
     
-    SetTeachersUUID(Global.MyTeacherList)
+    //SetTeachersUUID(Global.MyTeacherList)
 }
 
 func SetTeachersUUID(source:[TeacherAccount]){

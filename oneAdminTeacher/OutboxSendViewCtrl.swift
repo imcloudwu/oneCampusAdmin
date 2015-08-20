@@ -233,12 +233,16 @@ class TeacherSelector{
     
     func GetReceivers() -> [TeacherAccount]{
         
-        var retVal = [TeacherAccount]()
+        var tmp = Teachers.filter { (t) -> Bool in
+            return t.UUID.isEmpty
+        }
         
-        for teacher in Teachers{
-            if teacher.UUID != ""{
-                retVal.append(teacher)
-            }
+        if tmp.count > 0 {
+            SetTeachersUUID(tmp)
+        }
+        
+        var retVal = Teachers.filter { (t) -> Bool in
+            return !t.UUID.isEmpty
         }
         
         return retVal

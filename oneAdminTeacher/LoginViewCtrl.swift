@@ -13,6 +13,8 @@ class LoginViewCtrl: UIViewController,UIWebViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationItem.title = "登入"
+        
         HttpClient.TrustServerList.insert("1campus.net")
         
         progressTimer = ProgressTimer(progressBar: ProgressBar)

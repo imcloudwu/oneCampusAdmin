@@ -371,7 +371,8 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
                 }
             }
             
-            SetTeachersUUID(parentAccounts)
+            //發送訊息前會做了
+            //SetTeachersUUID(parentAccounts)
             
             let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("OutboxSendViewCtrl") as! OutboxSendViewCtrl
             nextView.MyTeacherSelector.Teachers = parentAccounts

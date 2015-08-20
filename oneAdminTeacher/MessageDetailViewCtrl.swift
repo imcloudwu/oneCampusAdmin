@@ -19,10 +19,6 @@ class MessageDetailViewCtrl: UIViewController{
     var MustVote = false
     var CanMultiple = false
     
-    @IBOutlet weak var VoteTitle: UILabel!
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var VoteFrameView: UIView!
-    
     @IBOutlet weak var MessageTitle: UILabel!
     
     @IBOutlet weak var DsnsName: UILabel!
@@ -30,7 +26,7 @@ class MessageDetailViewCtrl: UIViewController{
     @IBOutlet weak var Date: UILabel!
     @IBOutlet weak var HyperLinkView: UIView!
     @IBOutlet weak var HyperLink: UILabel!
-    @IBOutlet weak var Content: UITextView!
+    
     @IBOutlet weak var HyperLinkViewHeight: NSLayoutConstraint!
     
     @IBOutlet weak var StatusBtn: UIButton!
@@ -38,16 +34,12 @@ class MessageDetailViewCtrl: UIViewController{
     
     @IBOutlet weak var NameHeight: NSLayoutConstraint!
     
-    @IBOutlet weak var TextViewHeight: NSLayoutConstraint!
-    @IBOutlet weak var VoteFrameHeight: NSLayoutConstraint!
-    
     @IBOutlet weak var ScrollView: UIScrollView!
+    @IBOutlet weak var ContentLabel: UILabel!
     
     var OptionLabels = [UILabel]()
     
     var onceToken: dispatch_once_t = 0
-    
-    //@IBOutlet weak var TableViewHeight: NSLayoutConstraint!
     
     @IBAction func StatusBtnClick(sender: AnyObject) {
         self.WatchReaderList()
@@ -64,34 +56,26 @@ class MessageDetailViewCtrl: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        VoteFrameView.hidden = true
-        
         //設為已讀
         NotificationService.SetRead(MessageData.Id, accessToken: Global.AccessToken)
         
-        //tableView.delegate = self
-        //tableView.dataSource = self
+        CanMultiple = MessageData.Type == "multiple" ? true : false
         
-        //tableView.estimatedRowHeight = 44.0
-        //tableView.rowHeight = UITableViewAutomaticDimension
+        GetMessageOptions()
         
-        //判斷是否無投票訊息並設定投票按鈕和取得選項
-        if MessageData.Type == "normal" {
-            VoteFrameView.hidden = true
-            //TableViewHeight.constant = 0
+        if SenderMode{
+            
+            UpdateMessage()
+            
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "問卷統計", style: UIBarButtonItemStyle.Done, target: self, action: "ViewChart")
         }
         else{
             
-            CanMultiple = MessageData.Type == "multiple" ? true : false
-            VoteTitle.text = CanMultiple ? "選項(可複選):" : "選項:"
+            //收件者模式隱藏已讀狀態
+            StatusBtn.hidden = true
+            StatusBtnHeight.constant = 0
             
-            GetMessageOptions()
-            
-            if SenderMode{
-                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "問卷統計", style: UIBarButtonItemStyle.Done, target: self, action: "ViewChart")
-            }
-            else{
-                
+            if MessageData.Type != "normal"{
                 //有投過的訊息,按鈕長不一樣
                 if MessageData.Voted{
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Starred Ticket Filled-25.png"), style: UIBarButtonItemStyle.Done, target: self, action: "Vote")
@@ -99,30 +83,7 @@ class MessageDetailViewCtrl: UIViewController{
                 else{
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Starred Ticket-25.png"), style: UIBarButtonItemStyle.Done, target: self, action: "Vote")
                 }
-                
             }
-            
-        }
-        
-        //更新訊息狀態
-        if SenderMode{
-            UpdateMessage()
-        }
-        else{
-            StatusBtn.hidden = true
-            StatusBtnHeight.constant = 0
-            
-//            if MustVote && Options.count > 0{
-//                let alert = UIAlertController(title: "此訊息有投票項目,現在進行投票?", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-//                
-//                alert.addAction(UIAlertAction(title: "下次再說", style: UIAlertActionStyle.Cancel, handler: nil))
-//                
-//                alert.addAction(UIAlertAction(title: "進行投票", style: UIAlertActionStyle.Destructive, handler: { (action1) -> Void in
-//                    self.Vote()
-//                }))
-//                
-//                self.presentViewController(alert, animated: true, completion: nil)
-//            }
         }
         
         //資料初始化
@@ -152,10 +113,14 @@ class MessageDetailViewCtrl: UIViewController{
             HyperLinkViewHeight.constant = 0
         }
         
-        Content.text = MessageData.Content
+        //Set attrString
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 5
         
-        //TextViewHeight.constant = frame.size.height
+        var attrString = NSMutableAttributedString(string: MessageData.Content)
+        attrString.addAttribute(NSParagraphStyleAttributeName, value:paragraphStyle, range:NSMakeRange(0, attrString.length))
         
+        ContentLabel.attributedText = attrString
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -171,25 +136,19 @@ class MessageDetailViewCtrl: UIViewController{
     
     override func viewDidAppear(animated: Bool) {
         
+        //only one time
         dispatch_once(&onceToken) { () -> Void in
             self.InitUIControl()
         }
     }
     
     func InitUIControl(){
+        
         var yPosition : CGFloat = 0.0
         
-        Content.setContentOffset(CGPointMake(0, 0), animated: false)
+        //self.view.layoutIfNeeded()
         
-        let bestSize = Content.sizeThatFits(Content.bounds.size)
-        TextViewHeight.constant = bestSize.height
-        
-        //VoteFrameHeight.constant = CGFloat(Float(Options.count)) * 40 + 100
-        VoteFrameHeight.constant = 0
-        
-        self.view.layoutIfNeeded()
-        
-        yPosition += Content.bounds.size.height + 30
+        yPosition += ContentLabel.bounds.size.height + 30
         
         if Options.count > 1{
             for index in 0...Options.count - 1 {
@@ -202,9 +161,9 @@ class MessageDetailViewCtrl: UIViewController{
                 newLabel.numberOfLines = 0
                 newLabel.text = Options[index].Title
                 newLabel.backgroundColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 0.1)
-                newLabel.frame.size.width = Content.frame.size.width
+                newLabel.frame.size.width = ContentLabel.frame.size.width
                 newLabel.frame.size.height = 48.0
-                newLabel.frame.origin.x = Content.frame.origin.x
+                newLabel.frame.origin.x = ContentLabel.frame.origin.x
                 newLabel.frame.origin.y = yPosition
                 
                 let bestSize = newLabel.sizeThatFits(CGSizeMake(newLabel.frame.size.width, newLabel.frame.size.height))
@@ -254,28 +213,6 @@ class MessageDetailViewCtrl: UIViewController{
         }
     }
     
-//    func GoBack(){
-//
-//        if MustVote && !SenderMode {
-//
-//            let alarm = UIAlertController(title: "提醒您", message: "此訊息尚未進行投票回覆呦", preferredStyle: UIAlertControllerStyle.Alert)
-//            
-//            alarm.addAction(UIAlertAction(title: "朕知道了", style: UIAlertActionStyle.Cancel, handler: nil))
-//            
-//            alarm.addAction(UIAlertAction(title: "下次再說", style: UIAlertActionStyle.Destructive, handler: { (action) -> Void in
-//                self.navigationController?.popViewControllerAnimated(true)
-//            }))
-//            
-//            //alarm.addAction(UIAlertAction(title: "朕知道了", style: UIAlertActionStyle.Default, handler: nil))
-//            
-//            self.presentViewController(alarm, animated: true, completion: nil)
-//        }
-//        else{
-//            self.navigationController?.popViewControllerAnimated(true)
-//        }
-//        
-//    }
-    
     func ViewChart(){
         let chartView = self.storyboard?.instantiateViewControllerWithIdentifier("ChartViewCtrl") as! ChartViewCtrl
         chartView.VoteItems = Options
@@ -306,12 +243,6 @@ class MessageDetailViewCtrl: UIViewController{
         else{
             ShowErrorAlert(self, "錯誤", "必須選擇一個以上的選項")
         }
-        
-//        let voteView = self.storyboard?.instantiateViewControllerWithIdentifier("VoteViewCtrl") as! VoteViewCtrl
-//        voteView.Options = Options
-//        voteView.MessageData = MessageData
-//        
-//        self.navigationController?.pushViewController(voteView, animated: true)
     }
     
     func OpenUrl(){
@@ -388,58 +319,6 @@ class MessageDetailViewCtrl: UIViewController{
         
         self.navigationController?.pushViewController(nextView, animated: true)
     }
-    
-    //Mark : tableView
-//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
-//        return Options.count
-//    }
-//    
-//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
-//        var cell = tableView.dequeueReusableCellWithIdentifier("voteCell") as? UITableViewCell
-//        
-//        if cell == nil {
-//            cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "voteCell")
-//            //cell?.textLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
-//            cell?.textLabel?.numberOfLines = 0
-//        }
-//        
-//        cell?.textLabel?.text = Options[indexPath.row].Title
-//        
-//        if contains(Answers, indexPath.row){
-//            cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
-//        }
-//        else{
-//            cell!.accessoryType = UITableViewCellAccessoryType.None
-//        }
-//        
-//        return cell!
-//    }
-//    
-//    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
-//        
-//        var cell = tableView.cellForRowAtIndexPath(indexPath)
-//        
-//        if CanMultiple{
-//            if let index = find(Answers, indexPath.row){
-//                Answers.removeAtIndex(index)
-//                //cell!.accessoryType = UITableViewCellAccessoryType.None
-//            }
-//            else{
-//                Answers.append(indexPath.row)
-//                //cell!.accessoryType = UITableViewCellAccessoryType.Checkmark
-//            }
-//            
-//            tableView.reloadData()
-//        }
-//        else{
-//            
-//            Answers.removeAll(keepCapacity: false)
-//            
-//            Answers.append(indexPath.row)
-//            
-//            tableView.reloadData()
-//        }
-//    }
     
 }
 
