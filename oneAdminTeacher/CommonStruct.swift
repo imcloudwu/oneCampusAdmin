@@ -23,6 +23,11 @@ class DisplayItem{
     var OtherInfo3 : String
     var ColorAlarm : Bool
     
+    convenience init(Title:String,Value:String,OtherInfo:String){
+        
+        self.init(Title:Title,Value:Value,OtherInfo:OtherInfo,OtherInfo2:"",OtherInfo3:"",ColorAlarm:false)
+    }
+    
     convenience init(Title:String,Value:String,OtherInfo:String,ColorAlarm:Bool){
         
         self.init(Title:Title,Value:Value,OtherInfo:OtherInfo,OtherInfo2:"",OtherInfo3:"",ColorAlarm:ColorAlarm)

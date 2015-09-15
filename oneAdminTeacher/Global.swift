@@ -36,6 +36,8 @@ public class Global{
     
     static var LockQueue = dispatch_queue_create("LockQueue", nil)
     
+    static var SchoolListChanged = false
+    
     static func Reset(){
         MyPhoto = nil
         ClassList = nil
@@ -420,6 +422,59 @@ func RegisterForKeyboardNotifications(vc:UIViewController) {
         object: nil)
 }
 
+func GetImageFromBase64String(base64String:String,defaultImg:UIImage?) -> UIImage?{
+    
+    var decodedimage : UIImage?
+    
+    if let decodedData = NSData(base64EncodedString: base64String, options: NSDataBase64DecodingOptions(rawValue: 0)){
+        decodedimage = UIImage(data: decodedData)
+    }
+    
+    return decodedimage ?? defaultImg
+}
+
+func DialNumber(phoneNumber:String){
+    if let urlEncoding = phoneNumber.UrlEncoding{
+        let phone = "telprompt://" + urlEncoding
+        let url:NSURL = NSURL(string:phone)!
+        UIApplication.sharedApplication().openURL(url)
+    }
+}
+
+func SendEmail(email:String){
+    if let urlEncoding = email.UrlEncoding{
+        let url = NSURL(string: "mailto:\(urlEncoding)")!
+        UIApplication.sharedApplication().openURL(url)
+    }
+}
+
+func GoogleMap(address:String){
+    
+    if let urlEncoding = address.UrlEncoding{
+        
+        let appleMap = "http://maps.apple.com/?q=\(urlEncoding)"
+        let appleUrl:NSURL = NSURL(string:appleMap)!
+        UIApplication.sharedApplication().openURL(appleUrl)
+        
+        //            let mapLink = "comgooglemapsurl://www.google.com.tw/maps/place/" + urlEncoding
+        //            let url:NSURL = NSURL(string:mapLink)!
+        
+        //            if UIApplication.sharedApplication().canOpenURL(url) {
+        //                UIApplication.sharedApplication().openURL(url)
+        //            }
+        //            else{
+        //                var alert = UIAlertController(title: "繼續?", message: "需要安裝Google Map才能進行", preferredStyle: UIAlertControllerStyle.Alert)
+        //                alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        //                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (okaction) -> Void in
+        //                    let itunes = "https://itunes.apple.com/app/id585027354"
+        //                    let itunesUrl:NSURL = NSURL(string:itunes)!
+        //                    UIApplication.sharedApplication().openURL(itunesUrl)
+        //                }))
+        //
+        //                self.presentViewController(alert, animated: true, completion: nil)
+        //            }
+    }
+}
 
 
 

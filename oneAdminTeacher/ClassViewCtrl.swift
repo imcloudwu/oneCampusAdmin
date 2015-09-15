@@ -17,10 +17,8 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
     
     @IBOutlet weak var searchBar: UISearchBar!
     
-    //var progressTimer : ProgressTimer!
+    var progressTimer : ProgressTimer!
     var refreshControl : UIRefreshControl!
-    
-    var switchBtn : UIBarButtonItem!
     
     var _ClassList = [ClassItem]()
     var _DisplayDatas = [ClassItem]()
@@ -37,7 +35,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         
         searchBar.delegate = self
         
-        switchBtn = UIBarButtonItem(title: "快速切換", style: UIBarButtonItemStyle.Done, target: self, action: "FastSwitch")
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Menu 2-26.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "FastSwitch")
         
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "")
@@ -52,7 +50,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         self.navigationItem.title = "班級列表"
         self.navigationController?.interactivePopGestureRecognizer.enabled = false
         
-        //progressTimer = ProgressTimer(progressBar: progress)
+        progressTimer = ProgressTimer(progressBar: progress)
         
         if Global.ClassList != nil {
             _ClassList = Global.ClassList
@@ -71,24 +69,26 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
     
     override func viewDidAppear(animated: Bool) {
         
-        if _ClassList.count == 0 {
+        if _ClassList.count == 0 || Global.SchoolListChanged{
+            Global.SchoolListChanged = false
             GetMyClassList()
         }
-        
-        SetSwitchBtn()
     }
     
-    func SetSwitchBtn(){
-        if Global.MySchoolList.count >= 2{
-            self.navigationItem.rightBarButtonItem = switchBtn
-        }
-        else{
-            self.navigationItem.rightBarButtonItem = nil
-        }
-    }
+//    func ClassMenu(){
+//        let menu = UIAlertController(title: "功能選單", message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+//        
+//        menu.addAction(UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil))
+//        
+//        menu.addAction(UIAlertAction(title: "快速切換", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+//            self.FastSwitch()
+//        }))
+//        
+//        self.presentViewController(menu, animated: true, completion: nil)
+//    }
     
     func FastSwitch(){
-        let switcher = UIAlertController(title: "快速切換", message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        let switcher = UIAlertController(title: "快速切換?", message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
         
         switcher.addAction(UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil))
         
@@ -115,17 +115,14 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
                 self._DisplayDatas = founds
                 self._CurrentDatas = self._DisplayDatas
                 
+                self.tableView.contentOffset = CGPointMake(0, 0 - self.tableView.contentInset.top)
+                
                 self.tableView.reloadData()
+                
             }))
         }
         
         self.presentViewController(switcher, animated: true, completion: nil)
-    }
-    
-    func ToggleSideMenu(){
-        var app = UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        app.centerContainer?.toggleDrawerSide(MMDrawerSide.Left, animated: true, completion: nil)
     }
     
     func ReloadData(){
@@ -135,18 +132,22 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
     
     func GetMyClassList() {
         
-        self.progress.hidden = false
+        progressTimer.StartProgress()
+        noDataLabel.hidden = true
+        
+        //self.progress.hidden = false
         
         var tmpList = [ClassItem]()
+        Global.MySchoolList = [DsnsItem]()
         
         DsnsResult.removeAll(keepCapacity: false)
         for dsns in Global.DsnsList{
-            DsnsResult[dsns.Name] = false
+            DsnsResult[dsns.AccessPoint] = false
         }
         
-        var percent : Float = 1 / Float(DsnsResult.count)
+        //var percent : Float = 1 / Float(DsnsResult.count)
         
-        self.progress.progress = 0
+        //self.progress.progress = 0
         
         for dsns in Global.DsnsList{
             
@@ -161,12 +162,14 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
                 
                 dispatch_async(dispatch_get_main_queue(), {
                     
-                    self.DsnsResult[dsns.Name] = true
+                    self.DsnsResult[dsns.AccessPoint] = true
                     //self.progressTimer.StopProgress()
-                    self.progress.progress += percent
+                    //self.progress.progress += percent
                     
                     if self.AllDone(){
-                        self.progress.hidden = true
+                        
+                        self.progressTimer.StopProgress()
+                        //self.progress.hidden = true
                         
                         if tmpList.count > 0{
                             self.noDataLabel.hidden = true
@@ -183,9 +186,22 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
                     self._CurrentDatas = self._DisplayDatas
                     self.tableView.reloadData()
                     
-                    self.SetSwitchBtn()
                 })
             })
+        }
+        
+        if Global.DsnsList.count == 0{
+            
+            self.progressTimer.StopProgress()
+            
+            self.noDataLabel.hidden = false
+            
+            self._ClassList = tmpList
+            Global.ClassList = tmpList
+            
+            self._DisplayDatas = self._ClassList
+            self._CurrentDatas = self._DisplayDatas
+            self.tableView.reloadData()
         }
     }
     
@@ -428,6 +444,12 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         
         self.tableView.reloadData()
         
+    }
+    
+    func ToggleSideMenu(){
+        var app = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        app.centerContainer?.toggleDrawerSide(MMDrawerSide.Left, animated: true, completion: nil)
     }
 }
 

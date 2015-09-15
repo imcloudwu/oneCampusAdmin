@@ -67,9 +67,26 @@ class SideMenuViewCtrl: UIViewController{
         
         self.presentViewController(alert, animated: true, completion: nil)
         
+        
+        
 //        let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("Message") as! UIViewController
 //        
 //        ChangeContentView(nextView)
+    }
+    
+    
+    @IBAction func StudentQueryBtnClick(sender: AnyObject) {
+        
+        let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("StudentQuery") as! UIViewController
+        
+        ChangeContentView(nextView)
+    }
+    
+    @IBAction func SchoolInfoBtnClick(sender: AnyObject) {
+        
+        let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("SchoolInfo") as! UIViewController
+        
+        ChangeContentView(nextView)
     }
     
     func Logout(){

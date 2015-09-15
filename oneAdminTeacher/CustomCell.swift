@@ -8,6 +8,21 @@
 
 import UIKit
 
+class StudentCell2 : UITableViewCell{
+    
+    @IBOutlet weak var Photo: UIImageView!
+    @IBOutlet weak var Name: UILabel!
+    @IBOutlet weak var ClassName: UILabel!
+    @IBOutlet weak var ClassSeatNo: UILabel!
+    
+    var student : Student!
+    
+    override func awakeFromNib() {
+        Photo.layer.cornerRadius = Photo.frame.size.width / 2
+        Photo.layer.masksToBounds = true
+    }
+}
+
 class StudentCell : UITableViewCell{
     
     @IBOutlet weak var Photo: UIImageView!

@@ -1,27 +1,28 @@
 //
-//  FirstViewController.swift
-//  oneAdminTeacher
+//  StudentQueryViewCtrl.swift
+//  oneCampusAdmin
 //
-//  Created by Cloud on 6/12/15.
+//  Created by Cloud on 9/14/15.
 //  Copyright (c) 2015 ischool. All rights reserved.
 //
 
 import UIKit
 
-class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource {
+class StudentQueryViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var progressBar: UIProgressView!
+    @IBOutlet weak var searchBar: UISearchBar!
+    
+    @IBOutlet weak var noDataLabel: UILabel!
     
     var progressTimer : ProgressTimer!
     
     //var Timer : NSTimer!
     
-    var _studentData = [Student]()
     var _displayData = [Student]()
-    var ClassData : ClassItem!
     
-    var _con : Connection!
+    var DsnsResult = [String:Bool]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,19 +32,15 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         tableView.dataSource = self
         tableView.delegate = self
         
+        searchBar.delegate = self
+        
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "Menu-24.png"), style: UIBarButtonItemStyle.Plain, target: self, action: "ToggleSideMenu")
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
     
     override func viewWillAppear(animated: Bool) {
-        
-        self.navigationItem.title = ClassData.ClassName
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        
-        if _displayData.count == 0{
-            SetDataToTableView()
-        }
+        //self.navigationItem.title = ClassData.ClassName
     }
     
     override func didReceiveMemoryWarning() {
@@ -56,10 +53,11 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
-        let cell = tableView.dequeueReusableCellWithIdentifier("studentCell") as! StudentCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("studentCell2") as! StudentCell2
         cell.Photo.image = _displayData[indexPath.row].Photo
-        cell.Label1.text = "\(_displayData[indexPath.row].Name)"
-        cell.Label2.text = _displayData[indexPath.row].SeatNo == "" ? "" : "座號: \(_displayData[indexPath.row].SeatNo) "
+        cell.Name.text = "\(_displayData[indexPath.row].Name)"
+        cell.ClassName.text = "\(_displayData[indexPath.row].ClassName)"
+        cell.ClassSeatNo.text = _displayData[indexPath.row].SeatNo == "" ? "" : "座號: \(_displayData[indexPath.row].SeatNo) "
         
         cell.student = _displayData[indexPath.row]
         
@@ -77,47 +75,76 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("StudentDetailViewCtrl") as! StudentDetailViewCtrl
         nextView.StudentData = _displayData[indexPath.row]
         
-//        if ClassData.Major != "導師"{
-//            nextView.IsClassStudent = false
-//        }
-        
         self.navigationController?.pushViewController(nextView, animated: true)
     }
     
-    func SetDataToTableView(){
+    func SetDataToTableView(text:String){
+        
+        self.noDataLabel.hidden = true
+        
+        self.tableView.contentOffset = CGPointMake(0, 0 - self.tableView.contentInset.top)
         
         progressTimer.StartProgress()
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
+        DsnsResult.removeAll(keepCapacity: true)
+        
+        for dsns in Global.DsnsList{
+            DsnsResult[dsns.AccessPoint] = false
+        }
+        
+        var tmp = [Student]()
+        
+        if Global.DsnsList.count == 0{
+            self.progressTimer.StopProgress()
+        }
+        
+        for dsns in Global.DsnsList{
             
-            //self._con = GetCommonConnect(self.ClassData.AccessPoint, self._con, self)
-            self._con = GetCommonConnect(self.ClassData.AccessPoint)
-            
-            self._studentData = self.GetClassStudentData()
-//            if self.ClassData.Major == "導師"{
-//                self._studentData = self.GetClassStudentData()
-//            }
-//            else{
-//                self._studentData = self.GetCourseStudentData()
-//            }
-            
-            self._displayData = self._studentData
-            
-            dispatch_async(dispatch_get_main_queue(), {
-                self.tableView.reloadData()
-                self.progressTimer.StopProgress()
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
+                
+                var con = GetCommonConnect(dsns.AccessPoint)
+                tmp += self.GetClassStudentData(con, text: text)
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    self.DsnsResult[con.accessPoint] = true
+                    
+                    self._displayData = tmp
+                    
+                    self.tableView.reloadData()
+                    
+                    if self.AllDone(){
+                        self.progressTimer.StopProgress()
+                        
+                        if self._displayData.count == 0{
+                            self.noDataLabel.hidden = false
+                        }
+                    }
+                    
+                })
             })
-        })
+        }
     }
     
-    func GetClassStudentData() -> [Student]{
+    func AllDone() -> Bool{
+        
+        for dsns in DsnsResult{
+            if !dsns.1{
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    func GetClassStudentData(con:Connection ,text:String) -> [Student]{
         
         var err : DSFault!
         var nserr : NSError?
         
         var retVal = [Student]()
         
-        var rsp = _con.SendRequest("main.GetClassStudents", bodyContent: "<Request><All></All><ClassID>\(ClassData.ID)</ClassID></Request>", &err)
+        var rsp = con.SendRequest("main.QueryStudent", bodyContent: "<Request><All></All><Query>\(text)</Query></Request>", &err)
         
         //println(rsp)
         
@@ -133,6 +160,7 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
                 //println(stu.xmlString)
                 let studentID = stu["StudentID"].stringValue
                 let className = stu["ClassName"].stringValue
+                let classID = stu["ClassID"].stringValue
                 let studentName = stu["StudentName"].stringValue
                 let seatNo = stu["SeatNo"].stringValue
                 let studentNumber = stu["StudentNumber"].stringValue
@@ -146,59 +174,21 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
                 let motherName = stu["MotherName"].stringValue
                 let freshmanPhoto = GetImageFromBase64String(stu["FreshmanPhoto"].stringValue, UIImage(named: "User-100.png"))
                 
-                let stuItem = Student(DSNS: ClassData.AccessPoint,ID: studentID, ClassID: ClassData.ID, ClassName: className, Name: studentName, SeatNo: seatNo, StudentNumber: studentNumber, Gender: gender, MailingAddress: mailingAddress, PermanentAddress: permanentAddress, ContactPhone: contactPhone, PermanentPhone: permanentPhone, CustodianName: custodianName, FatherName: fatherName, MotherName: motherName, Photo: freshmanPhoto)
+                let stuItem = Student(DSNS: con.accessPoint,ID: studentID, ClassID: classID, ClassName: className, Name: studentName, SeatNo: seatNo, StudentNumber: studentNumber, Gender: gender, MailingAddress: mailingAddress, PermanentAddress: permanentAddress, ContactPhone: contactPhone, PermanentPhone: permanentPhone, CustodianName: custodianName, FatherName: fatherName, MotherName: motherName, Photo: freshmanPhoto)
                 
                 retVal.append(stuItem)
             }
         }
         
         retVal.sort{ $0.SeatNo.toInt() < $1.SeatNo.toInt() }
-
+        
         return retVal
     }
-    
-//    func GetCourseStudentData() -> [Student]{
-//        
-//        var err : DSFault!
-//        var nserr : NSError?
-//        
-//        var retVal = [Student]()
-//        
-//        var rsp = _con.sendRequest("main.GetCourseStudent", bodyContent: "<Request><All></All><CourseID>\(ClassData.ID)</CourseID></Request>", &err)
-//        
-//        //println(rsp)
-//        
-//        if err != nil{
-//            ShowErrorAlert(self,"取得資料發生錯誤",err.message)
-//            return retVal
-//        }
-//        
-//        let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
-//        
-//        if let students = xml?.root["Response"]["Student"].all {
-//            for stu in students{
-//                //println(stu.xmlString)
-//                let studentID = stu["StudentID"].stringValue
-//                let className = stu["ClassName"].stringValue
-//                let studentName = stu["StudentName"].stringValue
-//                let seatNo = stu["SeatNo"].stringValue
-//                let studentNumber = stu["StudentNumber"].stringValue
-//                let gender = stu["Gender"].stringValue
-//                let freshmanPhoto = GetImageFromBase64String(stu["FreshmanPhoto"].stringValue, defaultImg: UIImage(named: "User-100.png"))
-//                
-//                let stuItem = Student(DSNS: ClassData.AccessPoint,ID: studentID, ClassID : ClassData.ID, ClassName: className, Name: studentName, SeatNo: seatNo, StudentNumber: studentNumber, Gender: gender, MailingAddress: "", PermanentAddress: "", ContactPhone: "", PermanentPhone: "", CustodianName: "", FatherName: "", MotherName: "", Photo: freshmanPhoto)
-//                
-//                retVal.append(stuItem)
-//            }
-//        }
-//        
-//        return retVal
-//    }
     
     func LongPress(sender:UILongPressGestureRecognizer){
         
         if sender.state == UIGestureRecognizerState.Began{
-            var cell = sender.view as! StudentCell
+            var cell = sender.view as! StudentCell2
             
             let menu = UIAlertController(title: "要對 \(cell.student.Name) 的家長發送訊息嗎?", message: "", preferredStyle: UIAlertControllerStyle.Alert)
             
@@ -212,7 +202,7 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         }
     }
     
-    func SendMessageToClassParents(cell : StudentCell){
+    func SendMessageToClassParents(cell : StudentCell2){
         
         var err : DSFault!
         let con = GetCommonConnect(cell.student.DSNS)
@@ -252,28 +242,24 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         }
     }
     
+    //Mark : SearchBar
+    func searchBarSearchButtonClicked(searchBar: UISearchBar){
+        searchBar.resignFirstResponder()
+        self.view.endEditing(true)
+        
+        SetDataToTableView(searchBar.text)
+    }
+    
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        //Search(searchText)
+    }
+    
+    func ToggleSideMenu(){
+        var app = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        app.centerContainer?.toggleDrawerSide(MMDrawerSide.Left, animated: true, completion: nil)
+    }
+    
 }
 
-struct Student : Equatable{
-    var DSNS : String!
-    var ID : String!
-    var ClassID : String!
-    var ClassName : String!
-    var Name : String!
-    var SeatNo : String!
-    var StudentNumber : String!
-    var Gender : String!
-    var MailingAddress : String!
-    var PermanentAddress : String!
-    var ContactPhone : String!
-    var PermanentPhone : String!
-    var CustodianName : String!
-    var FatherName : String!
-    var MotherName : String!
-    var Photo : UIImage!
-}
-
-func ==(lhs: Student, rhs: Student) -> Bool {
-    return lhs.DSNS == rhs.DSNS && lhs.ID == rhs.ID
-}
 
