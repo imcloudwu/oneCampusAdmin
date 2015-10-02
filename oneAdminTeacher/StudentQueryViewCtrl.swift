@@ -149,7 +149,7 @@ class StudentQueryViewCtrl: UIViewController,UITableViewDelegate,UITableViewData
         //println(rsp)
         
         if err != nil{
-            ShowErrorAlert(self,"取得資料發生錯誤",err.message)
+            //ShowErrorAlert(self,"取得資料發生錯誤",err.message)
             return retVal
         }
         

@@ -20,32 +20,20 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_ischool.png" translatesAutoresizingMaskIntoConstraints="NO" id="jSa-qe-Ype">
-                    <rect key="frame" x="216" y="101" width="48" height="48"/>
+                    <rect key="frame" x="200" y="200" width="80" height="80"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="48" id="Fa1-Sp-eLG"/>
-                        <constraint firstAttribute="width" constant="48" id="T0M-Ch-NAN"/>
+                        <constraint firstAttribute="width" constant="80" id="9g8-4v-Ejw"/>
+                        <constraint firstAttribute="height" constant="80" id="SAL-Zb-XNU"/>
                     </constraints>
                 </imageView>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1Campus Admin" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="kId-c2-rCX">
-                    <rect key="frame" x="20" y="218" width="441" height="43"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="441" id="UCJ-1R-caQ"/>
-                        <constraint firstAttribute="height" constant="43" id="ag9-sl-DFX"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstAttribute="centerX" secondItem="kId-c2-rCX" secondAttribute="centerX" id="CeV-Sg-CXv"/>
-                <constraint firstAttribute="centerX" secondItem="jSa-qe-Ype" secondAttribute="centerX" id="Iyt-06-Cbi"/>
                 <constraint firstItem="8ie-xW-0ye" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" id="JWs-kz-0vV"/>
-                <constraint firstAttribute="centerY" secondItem="kId-c2-rCX" secondAttribute="centerY" id="Sas-6d-I2r"/>
+                <constraint firstAttribute="centerX" secondItem="jSa-qe-Ype" secondAttribute="centerX" id="Ynw-ru-78n"/>
                 <constraint firstAttribute="trailing" secondItem="8ie-xW-0ye" secondAttribute="trailing" constant="19" id="ZJV-Ga-98t"/>
                 <constraint firstAttribute="bottom" secondItem="8ie-xW-0ye" secondAttribute="bottom" constant="20" id="k6Q-Bj-XrX"/>
-                <constraint firstItem="kId-c2-rCX" firstAttribute="top" secondItem="jSa-qe-Ype" secondAttribute="bottom" constant="69" id="z2D-Sg-lRd"/>
+                <constraint firstAttribute="centerY" secondItem="jSa-qe-Ype" secondAttribute="centerY" id="yVy-N6-zyu"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
