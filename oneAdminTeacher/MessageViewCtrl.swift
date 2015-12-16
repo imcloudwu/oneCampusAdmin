@@ -52,7 +52,7 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
         self.refreshControl.addTarget(self, action: "ReloadData", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView.addSubview(refreshControl)
         
-        self.navigationController?.interactivePopGestureRecognizer.enabled = false
+        self.navigationController?.interactivePopGestureRecognizer?.enabled = false
         
         progressTimer = ProgressTimer(progressBar: progress)
         
@@ -214,7 +214,7 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
     }
     
     func ToggleSideMenu(){
-        var app = UIApplication.sharedApplication().delegate as! AppDelegate
+        let app = UIApplication.sharedApplication().delegate as! AppDelegate
         
         app.centerContainer?.toggleDrawerSide(MMDrawerSide.Left, animated: true, completion: nil)
     }
@@ -285,9 +285,9 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
         let data = DisplayMessage[indexPath.row]
         
-        var date = _dateFormate.stringFromDate(data.Date)
+        let date = _dateFormate.stringFromDate(data.Date)
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("MessageCell") as! MessageCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("MessageCell") as! MessageCell
         cell.Title.font = data.IsNew ? _boldFont : _normalFont
         cell.Title.text = data.Title
         cell.Date.text = _today == date ? _timeFormate.stringFromDate(data.Date) : date
@@ -307,7 +307,7 @@ class MessageViewCtrl: UIViewController,UITableViewDataSource,UITableViewDelegat
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
         
         let data = DisplayMessage[indexPath.row]
-        var cell = tableView.cellForRowAtIndexPath(indexPath) as! MessageCell
+        let cell = tableView.cellForRowAtIndexPath(indexPath) as! MessageCell
         
         if data.IsNew{
             data.IsNew = false

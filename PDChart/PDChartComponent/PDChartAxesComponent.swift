@@ -62,14 +62,14 @@ class PDChartAxesComponent: NSObject {
     }
     
     func getYAxesHeight() -> CGFloat {//heigth between 0~yMax
-        var basePoint: CGPoint = self.getBasePoint()
-        var yAxesHeight = basePoint.y - dataItem.arrowHeight - dataItem.yAxesTopMargin - dataItem.arrowBodyLength
+        let basePoint: CGPoint = self.getBasePoint()
+        let yAxesHeight = basePoint.y - dataItem.arrowHeight - dataItem.yAxesTopMargin - dataItem.arrowBodyLength
         return yAxesHeight
     }
     
     func getXAxesWidth() -> CGFloat {//width between 0~xMax
-        var basePoint: CGPoint = self.getBasePoint()
-        var xAxesWidth = dataItem.featureW - basePoint.x - dataItem.arrowHeight - dataItem.xAxesRightMargin - dataItem.arrowBodyLength
+        let basePoint: CGPoint = self.getBasePoint()
+        let xAxesWidth = dataItem.featureW - basePoint.x - dataItem.arrowHeight - dataItem.xAxesRightMargin - dataItem.arrowBodyLength
         return xAxesWidth
     }
     
@@ -82,24 +82,24 @@ class PDChartAxesComponent: NSObject {
             neededAxesWidth = 0
         }
         
-        var basePoint: CGPoint = CGPoint(x: dataItem.xAxesLeftMargin + neededAxesWidth / 2.0, y: dataItem.featureH - (dataItem.yAxesBottomMargin + neededAxesWidth / 2.0))
+        let basePoint: CGPoint = CGPoint(x: dataItem.xAxesLeftMargin + neededAxesWidth / 2.0, y: dataItem.featureH - (dataItem.yAxesBottomMargin + neededAxesWidth / 2.0))
         return basePoint
     }
     
     func getXDegreeInterval() -> CGFloat {
-        var xAxesWidth: CGFloat = self.getXAxesWidth()
-        var xDegreeInterval: CGFloat = dataItem.xInterval / dataItem.xMax * xAxesWidth
+        let xAxesWidth: CGFloat = self.getXAxesWidth()
+        let xDegreeInterval: CGFloat = dataItem.xInterval / dataItem.xMax * xAxesWidth
         return xDegreeInterval
     }
     
     func getYDegreeInterval() -> CGFloat {
-        var yAxesHeight: CGFloat = self.getYAxesHeight()
-        var yDegreeInterval: CGFloat = dataItem.yInterval / dataItem.yMax * yAxesHeight
+        let yAxesHeight: CGFloat = self.getYAxesHeight()
+        let yDegreeInterval: CGFloat = dataItem.yInterval / dataItem.yMax * yAxesHeight
         return yDegreeInterval
     }
     
     func getAxesDegreeTipLabel(tipText: String, center: CGPoint, size: CGSize, fontSize: CGFloat, textAlignment: NSTextAlignment, textColor: UIColor) -> UILabel {
-        var label: UILabel = UILabel(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: size))
+        let label: UILabel = UILabel(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: size))
         label.text = tipText
         label.center = center
         label.textAlignment = textAlignment
@@ -119,31 +119,31 @@ class PDChartAxesComponent: NSObject {
     }
     
     func strokeAxes(context: CGContextRef?) {
-        var xAxesWidth: CGFloat = self.getXAxesWidth()
-        var yAxesHeight: CGFloat = self.getYAxesHeight()
-        var basePoint: CGPoint = self.getBasePoint()
+        let xAxesWidth: CGFloat = self.getXAxesWidth()
+        let yAxesHeight: CGFloat = self.getYAxesHeight()
+        let basePoint: CGPoint = self.getBasePoint()
         
         
         if dataItem.showAxes {
             CGContextSetStrokeColorWithColor(context, dataItem.axesColor.CGColor)
             CGContextSetFillColorWithColor(context, dataItem.axesColor.CGColor)
             
-            var axesPath: UIBezierPath = UIBezierPath()
+            let axesPath: UIBezierPath = UIBezierPath()
             axesPath.lineWidth = dataItem.axesWidth
-            axesPath.lineCapStyle = kCGLineCapRound
-            axesPath.lineJoinStyle = kCGLineJoinRound
+            axesPath.lineCapStyle = CGLineCap.Round
+            axesPath.lineJoinStyle = CGLineJoin.Round
             
             //x axes--------------------------------------
             axesPath.moveToPoint(CGPoint(x: basePoint.x, y: basePoint.y))
             axesPath.addLineToPoint(CGPoint(x: basePoint.x + xAxesWidth, y: basePoint.y))
             
             //degrees in x axes
-            var xDegreeNum: Int = Int((dataItem.xMax - (dataItem.xMax % dataItem.xInterval)) / dataItem.xInterval)
-            var xDegreeInterval: CGFloat = self.getXDegreeInterval()
+            let xDegreeNum: Int = Int((dataItem.xMax - (dataItem.xMax % dataItem.xInterval)) / dataItem.xInterval)
+            let xDegreeInterval: CGFloat = self.getXDegreeInterval()
 
             if dataItem.showXDegree {
                 for var i = 0; i < xDegreeNum; i++ {
-                    var degreeX: CGFloat = basePoint.x + xDegreeInterval * CGFloat(i + 1)
+                    let degreeX: CGFloat = basePoint.x + xDegreeInterval * CGFloat(i + 1)
                     axesPath.moveToPoint(CGPoint(x: degreeX, y: basePoint.y))
                     axesPath.addLineToPoint(CGPoint(x: degreeX, y: basePoint.y - dataItem.degreeLength))
                 }
@@ -154,12 +154,12 @@ class PDChartAxesComponent: NSObject {
             axesPath.moveToPoint(CGPoint(x: basePoint.x + xAxesWidth, y: basePoint.y))
             axesPath.addLineToPoint(CGPoint(x: basePoint.x + xAxesWidth + dataItem.arrowBodyLength, y: basePoint.y))
             //arrow head
-            var arrowPath: UIBezierPath = UIBezierPath()
+            let arrowPath: UIBezierPath = UIBezierPath()
             arrowPath.lineWidth = dataItem.axesWidth
-            arrowPath.lineCapStyle = kCGLineCapRound
-            arrowPath.lineJoinStyle = kCGLineJoinRound
+            arrowPath.lineCapStyle = CGLineCap.Round
+            arrowPath.lineJoinStyle = CGLineJoin.Round
             
-            var xArrowTopPoint: CGPoint = CGPoint(x: basePoint.x + xAxesWidth + dataItem.arrowBodyLength + dataItem.arrowHeight, y: basePoint.y)
+            let xArrowTopPoint: CGPoint = CGPoint(x: basePoint.x + xAxesWidth + dataItem.arrowBodyLength + dataItem.arrowHeight, y: basePoint.y)
             arrowPath.moveToPoint(xArrowTopPoint)
             arrowPath.addLineToPoint(CGPoint(x: basePoint.x + xAxesWidth + dataItem.arrowBodyLength, y: basePoint.y - dataItem.arrowWidth / 2))
             arrowPath.addLineToPoint(CGPoint(x: basePoint.x + xAxesWidth + dataItem.arrowBodyLength, y: basePoint.y + dataItem.arrowWidth / 2))
@@ -170,11 +170,11 @@ class PDChartAxesComponent: NSObject {
             axesPath.addLineToPoint(CGPoint(x: basePoint.x, y: basePoint.y - yAxesHeight))
             
             //degrees in y axes
-            var yDegreesNum: Int = Int((dataItem.yMax - (dataItem.yMax % dataItem.yInterval)) / dataItem.yInterval)
-            var yDegreeInterval: CGFloat = self.getYDegreeInterval()
+            let yDegreesNum: Int = Int((dataItem.yMax - (dataItem.yMax % dataItem.yInterval)) / dataItem.yInterval)
+            let yDegreeInterval: CGFloat = self.getYDegreeInterval()
             if dataItem.showYDegree {
                 for var i = 0; i < yDegreesNum; i++ {
-                    var degreeY: CGFloat = basePoint.y - yDegreeInterval * CGFloat(i + 1)
+                    let degreeY: CGFloat = basePoint.y - yDegreeInterval * CGFloat(i + 1)
                     axesPath.moveToPoint(CGPoint(x: basePoint.x, y: degreeY))
                     axesPath.addLineToPoint(CGPoint(x: basePoint.x +  dataItem.degreeLength, y: degreeY))
                 }
@@ -185,7 +185,7 @@ class PDChartAxesComponent: NSObject {
             axesPath.moveToPoint(CGPoint(x: basePoint.x, y: basePoint.y - yAxesHeight))
             axesPath.addLineToPoint(CGPoint(x: basePoint.x, y: basePoint.y - yAxesHeight - dataItem.arrowBodyLength))
             //arrow head
-            var yArrowTopPoint: CGPoint = CGPoint(x: basePoint.x, y: basePoint.y - yAxesHeight - dataItem.arrowBodyLength - dataItem.arrowHeight)
+            let yArrowTopPoint: CGPoint = CGPoint(x: basePoint.x, y: basePoint.y - yAxesHeight - dataItem.arrowBodyLength - dataItem.arrowHeight)
             arrowPath.moveToPoint(yArrowTopPoint)
             arrowPath.addLineToPoint(CGPoint(x: basePoint.x - dataItem.arrowWidth / 2, y: basePoint.y - yAxesHeight - dataItem.arrowBodyLength))
             arrowPath.addLineToPoint(CGPoint(x: basePoint.x + dataItem.arrowWidth / 2, y: basePoint.y - yAxesHeight - dataItem.arrowBodyLength))
@@ -198,32 +198,32 @@ class PDChartAxesComponent: NSObject {
             //func getXAxesDegreeTipLabel(tipText: String, frame: CGRect, fontSize: CGFloat) -> UILabel {
             if (dataItem.xAxesDegreeTexts != nil) {
                 for var i = 0; i < dataItem.xAxesDegreeTexts!.count; i++ {
-                    var size: CGSize = CGSize(width: xDegreeInterval - dataItem.degreeTipMarginHorizon * 2, height: dataItem.degreeTipFontSize)
-                    var center: CGPoint = CGPoint(x: basePoint.x + xDegreeInterval * CGFloat(i + 1), y: basePoint.y + dataItem.degreeTipMarginVertical + size.height / 2)
-                    var label: UILabel = self.getXAxesDegreeTipLabel(dataItem.xAxesDegreeTexts![i], center: center, size: size, fontSize: dataItem.degreeTipFontSize)
+                    let size: CGSize = CGSize(width: xDegreeInterval - dataItem.degreeTipMarginHorizon * 2, height: dataItem.degreeTipFontSize)
+                    let center: CGPoint = CGPoint(x: basePoint.x + xDegreeInterval * CGFloat(i + 1), y: basePoint.y + dataItem.degreeTipMarginVertical + size.height / 2)
+                    let label: UILabel = self.getXAxesDegreeTipLabel(dataItem.xAxesDegreeTexts![i], center: center, size: size, fontSize: dataItem.degreeTipFontSize)
                     dataItem.targetView.addSubview(label)
                 }
             } else {
                 for var i = 0; i < xDegreeNum; i++ {
-                    var size: CGSize = CGSize(width: xDegreeInterval - dataItem.degreeTipMarginHorizon * 2, height: dataItem.degreeTipFontSize)
-                    var center: CGPoint = CGPoint(x: basePoint.x + xDegreeInterval * CGFloat(i + 1), y: basePoint.y + dataItem.degreeTipMarginVertical + size.height / 2)
-                    var label: UILabel = self.getXAxesDegreeTipLabel("\(CGFloat(i + 1) * dataItem.xInterval)", center: center, size: size, fontSize: dataItem.degreeTipFontSize)
+                    let size: CGSize = CGSize(width: xDegreeInterval - dataItem.degreeTipMarginHorizon * 2, height: dataItem.degreeTipFontSize)
+                    let center: CGPoint = CGPoint(x: basePoint.x + xDegreeInterval * CGFloat(i + 1), y: basePoint.y + dataItem.degreeTipMarginVertical + size.height / 2)
+                    let label: UILabel = self.getXAxesDegreeTipLabel("\(CGFloat(i + 1) * dataItem.xInterval)", center: center, size: size, fontSize: dataItem.degreeTipFontSize)
                     dataItem.targetView.addSubview(label)
                 }
             }
             
             if (dataItem.yAxesDegreeTexts != nil) {
                 for var i = 0; i < dataItem.yAxesDegreeTexts!.count; i++ {
-                    var size: CGSize = CGSize(width: dataItem.xAxesLeftMargin - dataItem.degreeTipMarginHorizon * 2, height: dataItem.degreeTipFontSize)
-                    var center: CGPoint = CGPoint(x: dataItem.xAxesLeftMargin / 2, y: basePoint.y - yDegreeInterval * CGFloat(i + 1))
-                    var label: UILabel = self.getYAxesDegreeTipLabel(dataItem.yAxesDegreeTexts![i], center: center, size: size, fontSize: dataItem.degreeTipFontSize)
+                    let size: CGSize = CGSize(width: dataItem.xAxesLeftMargin - dataItem.degreeTipMarginHorizon * 2, height: dataItem.degreeTipFontSize)
+                    let center: CGPoint = CGPoint(x: dataItem.xAxesLeftMargin / 2, y: basePoint.y - yDegreeInterval * CGFloat(i + 1))
+                    let label: UILabel = self.getYAxesDegreeTipLabel(dataItem.yAxesDegreeTexts![i], center: center, size: size, fontSize: dataItem.degreeTipFontSize)
                     dataItem.targetView.addSubview(label)
                 }
             } else {
                 for var i = 0; i < yDegreesNum; i++ {
-                    var size: CGSize = CGSize(width: dataItem.xAxesLeftMargin - dataItem.degreeTipMarginHorizon * 2, height: dataItem.degreeTipFontSize)
-                    var center: CGPoint = CGPoint(x: dataItem.xAxesLeftMargin / 2, y: basePoint.y - yDegreeInterval * CGFloat(i + 1))
-                    var label: UILabel = self.getYAxesDegreeTipLabel("\(CGFloat(i + 1) * dataItem.yInterval)", center: center, size: size, fontSize: dataItem.degreeTipFontSize)
+                    let size: CGSize = CGSize(width: dataItem.xAxesLeftMargin - dataItem.degreeTipMarginHorizon * 2, height: dataItem.degreeTipFontSize)
+                    let center: CGPoint = CGPoint(x: dataItem.xAxesLeftMargin / 2, y: basePoint.y - yDegreeInterval * CGFloat(i + 1))
+                    let label: UILabel = self.getYAxesDegreeTipLabel("\(CGFloat(i + 1) * dataItem.yInterval)", center: center, size: size, fontSize: dataItem.degreeTipFontSize)
                     dataItem.targetView.addSubview(label)
                 }
             }

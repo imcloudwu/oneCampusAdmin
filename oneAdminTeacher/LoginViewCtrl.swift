@@ -57,8 +57,8 @@ class LoginViewCtrl: UIViewController,UIWebViewDelegate {
 //        let target = "https://auth.ischool.com.tw/oauth/authorize.php?client_id=\(Global.clientID)&response_type=code&state=http://_blank&redirect_uri=http://_blank&scope=User.Mail,User.BasicInfo,*:ischool.teacher.app"
         
         //載入登入頁面
-        var urlobj = NSURL(string: target)
-        var request = NSURLRequest(URL: urlobj!)
+        let urlobj = NSURL(string: target)
+        let request = NSURLRequest(URL: urlobj!)
         webView.loadRequest(request)
     }
     
@@ -70,14 +70,14 @@ class LoginViewCtrl: UIViewController,UIWebViewDelegate {
         progressTimer.StopProgress()
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError){
+    func webView(webView: UIWebView, didFailLoadWithError error: NSError?){
         
         progressTimer.StopProgress()
         
         //網路異常
-        if error.code == -1009{
+        if error!.code == -1009{
             
-            if let code = GetCodeFromError(error){
+            if let code = GetCodeFromError(error!){
                 GotoNextViewByCode(code)
             }
             else{
@@ -88,16 +88,16 @@ class LoginViewCtrl: UIViewController,UIWebViewDelegate {
         }
         
         //取得code
-        if error.domain == "NSURLErrorDomain" && error.code == -1003{
+        if error!.domain == "NSURLErrorDomain" && error!.code == -1003{
             
-            if let code = GetCodeFromError(error){
+            if let code = GetCodeFromError(error!){
                 GotoNextViewByCode(code)
             }
         }
     }
     
     func GetCodeFromError(error: NSError) -> String?{
-        if let url = error.userInfo?["NSErrorFailingURLStringKey"] as? String{
+        if let url = error.userInfo["NSErrorFailingURLStringKey"] as? String{
             if let range = url.rangeOfString("http://_blank/?state=http%3A%2F%2F_blank&code="){
                 var code = url
                 code.removeRange(range)
@@ -129,7 +129,7 @@ class LoginViewCtrl: UIViewController,UIWebViewDelegate {
     
     func UpdateLocalPhotoFile(){
         
-        var rsp = HttpClient.Get("https://auth.ischool.com.tw/service/getpic.php")
+        var rsp = try? HttpClient.Get("https://auth.ischool.com.tw/service/getpic.php")
         
         if let data = rsp{
             
@@ -137,9 +137,9 @@ class LoginViewCtrl: UIViewController,UIWebViewDelegate {
             
             let path = Global.MyPhotoLocalPath
             
-            let imgData = UIImageJPEGRepresentation(image, 0.5)
+            let imgData = UIImageJPEGRepresentation(image!, 0.5)
             
-            imgData.writeToFile(path, atomically: true)
+            imgData?.writeToFile(path, atomically: true)
         }
     }
 }

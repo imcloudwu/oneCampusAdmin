@@ -84,11 +84,16 @@ class CourseScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataS
         var rsp = _con.SendRequest("courseTeacher.GetExamScore", bodyContent: "<Request><Condition><RefStudentId>\(StudentData.ID)</RefStudentId><RefCourseId>\(StudentData.ClassID)</RefCourseId></Condition></Request>", &err)
         
         if err != nil{
-            ShowErrorAlert(self,"取得定期成績資料發生錯誤",err.message)
+            ShowErrorAlert(self,title: "取得定期成績資料發生錯誤",msg: err.message)
             return retVal
         }
         
-        var xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        var xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let sceTakes = xml?.root["Response"]["SceTake"].all {
             for sceTake in sceTakes{
@@ -119,11 +124,15 @@ class CourseScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataS
         rsp = _con.SendRequest("courseTeacher.GetCourseScore", bodyContent: "<Request><Condition><RefStudentId>\(StudentData.ID)</RefStudentId><RefCourseId>\(StudentData.ClassID)</RefCourseId></Condition></Request>", &err)
         
         if err != nil{
-            ShowErrorAlert(self,"取得課程成績資料發生錯誤",err.message)
+            ShowErrorAlert(self,title: "取得課程成績資料發生錯誤",msg: err.message)
             return retVal
         }
         
-        xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         let courseScore = xml?.root["Response"]["CourseScore"]["Score"].stringValue
         let ordinarilyScore = xml?.root["Response"]["CourseScore"]["Extension"]["Extension"]["OrdinarilyScore"].stringValue
         
@@ -147,13 +156,18 @@ class CourseScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataS
         //encode成功呼叫查詢
         if let encodingName = StudentData.DSNS.UrlEncoding{
             
-            var data = HttpClient.Get("http://dsns.1campus.net/campusman.ischool.com.tw/config.public/GetSchoolList?content=%3CRequest%3E%3CMatch%3E\(encodingName)%3C/Match%3E%3CPagination%3E%3CPageSize%3E10%3C/PageSize%3E%3CStartPage%3E1%3C/StartPage%3E%3C/Pagination%3E%3C/Request%3E")
+            let data = try? HttpClient.Get("http://dsns.1campus.net/campusman.ischool.com.tw/config.public/GetSchoolList?content=%3CRequest%3E%3CMatch%3E\(encodingName)%3C/Match%3E%3CPagination%3E%3CPageSize%3E10%3C/PageSize%3E%3CStartPage%3E1%3C/StartPage%3E%3C/Pagination%3E%3C/Request%3E")
             
             if let rsp = data{
                 
                 var nserr : NSError?
                 
-                let xml = AEXMLDocument(xmlData: rsp, error: &nserr)
+                let xml: AEXMLDocument?
+                do {
+                    xml = try AEXMLDocument(xmlData: rsp)
+                } catch _ {
+                    xml = nil
+                }
                 
                 if let coreSystem = xml?.root["Response"]["School"]["CoreSystem"].stringValue{
                     
@@ -178,7 +192,7 @@ class CourseScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataS
         
         let data = _displayData[indexPath.row]
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem") as? UITableViewCell
+        var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem")
         
         if cell == nil{
             cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "summaryItem")

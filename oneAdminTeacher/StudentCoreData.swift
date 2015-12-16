@@ -43,10 +43,13 @@ class StudentCoreData{
         myObject.setValue(student.DSNS, forKey: "dsns")
         myObject.setValue(student.ID, forKey: "id")
         myObject.setValue(student.Name, forKey: "name")
-        //myObject.setValue(UIImagePNGRepresentation(student.Photo), forKey: "photo")
-        //}
+        do {
+            //myObject.setValue(UIImagePNGRepresentation(student.Photo), forKey: "photo")
+            //}
         
-        managedObjectContext.save(nil)
+            try managedObjectContext.save()
+        } catch _ {
+        }
     }
     
     //Core Data using
@@ -60,7 +63,7 @@ class StudentCoreData{
         
         var error: NSError?
         
-        let results = managedObjectContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]
+        let results = (try! managedObjectContext.executeFetchRequest(fetchRequest)) as! [NSManagedObject]
         
         for obj in results {
             let id = obj.valueForKey("id") as! String
@@ -81,13 +84,16 @@ class StudentCoreData{
         let managedObjectContext = appDelegate.managedObjectContext!
         let fetchRequest = NSFetchRequest(entityName: "Student")
         
-        let results = managedObjectContext.executeFetchRequest(fetchRequest, error: nil) as![NSManagedObject]
+        let results = (try! managedObjectContext.executeFetchRequest(fetchRequest)) as![NSManagedObject]
         
         for obj in results {
             managedObjectContext.deleteObject(obj)
         }
         
-        managedObjectContext.save(nil)
+        do {
+            try managedObjectContext.save()
+        } catch _ {
+        }
     }
     
     //Core Data using
@@ -97,12 +103,15 @@ class StudentCoreData{
         let fetchRequest = NSFetchRequest(entityName: "Student")
         fetchRequest.predicate = NSPredicate(format: "dsns=%@ and id=%@", student.DSNS, student.ID)
         
-        let results = managedObjectContext.executeFetchRequest(fetchRequest, error: nil) as![NSManagedObject]
+        let results = (try! managedObjectContext.executeFetchRequest(fetchRequest)) as![NSManagedObject]
         
         for obj in results {
             managedObjectContext.deleteObject(obj)
         }
         
-        managedObjectContext.save(nil)
+        do {
+            try managedObjectContext.save()
+        } catch _ {
+        }
     }
 }

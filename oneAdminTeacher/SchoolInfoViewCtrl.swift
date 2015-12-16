@@ -81,7 +81,7 @@ class SchoolInfoViewCtrl: UIViewController,UITableViewDataSource,UITableViewDele
         
         let data = _DisplayItems[indexPath.row]
         
-        var cell = GetCell(data)
+        let cell = GetCell(data)
         
         cell.textLabel?.text = data.Title
         cell.detailTextLabel?.text = data.Value
@@ -133,10 +133,10 @@ class SchoolInfoViewCtrl: UIViewController,UITableViewDataSource,UITableViewDele
         var cell:UITableViewCell?
         
         if data.OtherInfo == "header"{
-            cell = self.tableView.dequeueReusableCellWithIdentifier("schoolheader") as? UITableViewCell
+            cell = self.tableView.dequeueReusableCellWithIdentifier("schoolheader")
         }
         else{
-            cell = self.tableView.dequeueReusableCellWithIdentifier("schoolinfo") as? UITableViewCell
+            cell = self.tableView.dequeueReusableCellWithIdentifier("schoolinfo")
         }
         
         if cell == nil{
@@ -189,13 +189,18 @@ class SchoolInfoViewCtrl: UIViewController,UITableViewDataSource,UITableViewDele
         
         var retVal = [DisplayItem]()
         
-        var con = GetCommonConnect(dsns.AccessPoint)
+        let con = GetCommonConnect(dsns.AccessPoint)
         var err : DSFault!
         
-        var rsp = con.SendRequest("main.GetCurrentSemester", bodyContent: "", &err)
+        let rsp = con.SendRequest("main.GetCurrentSemester", bodyContent: "", &err)
         
         var nerror : NSError?
-        var xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nerror)
+        var xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let schoolYear = xml?.root["Response"]["SchoolYear"].stringValue{
             _currentSchoolYear = schoolYear
@@ -214,13 +219,18 @@ class SchoolInfoViewCtrl: UIViewController,UITableViewDataSource,UITableViewDele
         
         var retVal = [DisplayItem]()
         
-        var con = GetCommonConnect(dsns.AccessPoint)
+        let con = GetCommonConnect(dsns.AccessPoint)
         var err : DSFault!
         
-        var rsp = con.SendRequest("main.GetSchoolInfo", bodyContent: "", &err)
+        let rsp = con.SendRequest("main.GetSchoolInfo", bodyContent: "", &err)
         
         var nerror : NSError?
-        var xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nerror)
+        var xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         //基本資料
         if let address = xml?.root["Response"]["Address"].stringValue{
@@ -327,13 +337,18 @@ class SchoolInfoViewCtrl: UIViewController,UITableViewDataSource,UITableViewDele
         
         var retVal = [DisplayItem]()
         
-        var con = GetCommonConnect(dsns.AccessPoint)
+        let con = GetCommonConnect(dsns.AccessPoint)
         var err : DSFault!
         
-        var rsp = con.SendRequest("main.GetSchoolStatistic", bodyContent: "<Request><All></All><SchoolYear>\(_currentSchoolYear)</SchoolYear><Semester>\(_currentSemester)</Semester></Request>", &err)
+        let rsp = con.SendRequest("main.GetSchoolStatistic", bodyContent: "<Request><All></All><SchoolYear>\(_currentSchoolYear)</SchoolYear><Semester>\(_currentSemester)</Semester></Request>", &err)
         
         var nerror : NSError?
-        var xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nerror)
+        var xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let statistics = xml?.root["InfoList"]["Statistic"].all{
             for statistic in statistics{
@@ -354,7 +369,7 @@ class SchoolInfoViewCtrl: UIViewController,UITableViewDataSource,UITableViewDele
     }
     
     func ToggleSideMenu(){
-        var app = UIApplication.sharedApplication().delegate as! AppDelegate
+        let app = UIApplication.sharedApplication().delegate as! AppDelegate
         
         app.centerContainer?.toggleDrawerSide(MMDrawerSide.Left, animated: true, completion: nil)
     }

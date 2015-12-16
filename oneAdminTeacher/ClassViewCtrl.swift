@@ -48,7 +48,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         tableView.delegate = self
         tableView.dataSource = self
         self.navigationItem.title = "班級列表"
-        self.navigationController?.interactivePopGestureRecognizer.enabled = false
+        self.navigationController?.interactivePopGestureRecognizer?.enabled = false
         
         progressTimer = ProgressTimer(progressBar: progress)
         
@@ -155,8 +155,8 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
             
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
                 
-                var con = Connection()
-                SetCommonConnect(dsns.AccessPoint, con)
+                let con = Connection()
+                SetCommonConnect(dsns.AccessPoint, con: con)
                 //con = CommonConnect(dsns.AccessPoint, con, self)
                 tmpList += self.GetData(con)
                 
@@ -220,22 +220,26 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         var retVal = [ClassItem]()
         
         var err : DSFault!
-        var nserr : NSError?
         
-        var rsp = con.SendRequest("main.GetAllClass", bodyContent: "", &err)
+        let rsp = con.SendRequest("main.GetAllClass", bodyContent: "", &err)
         
         if err != nil{
             //ShowErrorAlert(self,err,nil)
             return retVal
         }
         
-        var xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        var xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let classes = xml?.root["ClassList"]["Class"].all {
             for cls in classes{
                 let ClassID = cls["ClassID"].stringValue
                 let ClassName = cls["ClassName"].stringValue
-                let GradeYear = cls["GradeYear"].stringValue.toInt() ?? 0
+                let GradeYear = Int(cls["GradeYear"].stringValue) ?? 0
                 let TeacherName = cls["TeacherName"].stringValue
                 let TeacherAccount = cls["TeacherAccount"].stringValue
                 
@@ -246,7 +250,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         if retVal.count > 0{
             
             let schoolName = GetSchoolName(con)
-            GetAllTeacherAccount(schoolName, con)
+            GetAllTeacherAccount(schoolName, con: con)
             
             retVal.insert(ClassItem(DSNS : con.accessPoint, ID: "header", ClassName: schoolName, AccessPoint: "", GradeYear: 0, TeacherName: "", TeacherAccount : ""), atIndex: 0)
         }
@@ -274,7 +278,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         let data = _DisplayDatas[indexPath.row]
         
         if data.ID == "header"{
-            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem") as? UITableViewCell
+            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem")
             
             if cell == nil{
                 cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "summaryItem")
@@ -330,7 +334,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
     func LongPress(sender:UILongPressGestureRecognizer){
         
         if sender.state == UIGestureRecognizerState.Began{
-            var cell = sender.view as! ClassCell
+            let cell = sender.view as! ClassCell
             
             let menu = UIAlertController(title: "要對 \(cell.ClassName.text!) 發送訊息嗎?", message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
             
@@ -361,7 +365,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
             self.navigationController?.pushViewController(nextView, animated: true)
         }
         else{
-            ShowErrorAlert(self, "錯誤", "找不到此班導師的帳號")
+            ShowErrorAlert(self, title: "錯誤", msg: "找不到此班導師的帳號")
         }
         
     }
@@ -374,12 +378,17 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         var rsp = con.sendRequest("main.GetParent", bodyContent: "<Request><ClassID>\(cell.classItem.ID)</ClassID></Request>", &err)
         
         if err != nil{
-            ShowErrorAlert(self, "錯誤", err.message)
+            ShowErrorAlert(self, title: "錯誤", msg: err.message)
         }
         else{
             var nserr : NSError?
             
-            var xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+            var xml: AEXMLDocument?
+            do {
+                xml = try AEXMLDocument(xmlData: rsp.dataValue)
+            } catch _ {
+                xml = nil
+            }
             
             var parentAccounts = [TeacherAccount]()
             
@@ -412,7 +421,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
         searchBar.resignFirstResponder()
         self.view.endEditing(true)
         
-        Search(searchBar.text)
+        Search(searchBar.text!)
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
@@ -447,7 +456,7 @@ class ClassViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,
     }
     
     func ToggleSideMenu(){
-        var app = UIApplication.sharedApplication().delegate as! AppDelegate
+        let app = UIApplication.sharedApplication().delegate as! AppDelegate
         
         app.centerContainer?.toggleDrawerSide(MMDrawerSide.Left, animated: true, completion: nil)
     }

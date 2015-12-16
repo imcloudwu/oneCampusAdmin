@@ -144,7 +144,7 @@ public class KYCircularProgress: UIView {
         }
     }
     
-    required public init(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         configureProgressLayer()
     }
@@ -157,8 +157,8 @@ public class KYCircularProgress: UIView {
     /**
     Create `KYCircularProgress` with progress guide.
     
-    :param: frame `KYCircularProgress` frame.
-    :param: showProgressGuide If you set to `true`, progress guide view is enabled.
+    - parameter frame: `KYCircularProgress` frame.
+    - parameter showProgressGuide: If you set to `true`, progress guide view is enabled.
     */
     public init(frame: CGRect, showProgressGuide: Bool) {
         super.init(frame: frame)
@@ -169,7 +169,7 @@ public class KYCircularProgress: UIView {
     /**
     This closure is called when set value to `progress` property.
     
-    :param: completion progress changed closure.
+    - parameter completion: progress changed closure.
     */
     public func progressChangedClosure(completion: progressChangedHandler) {
         progressChangedClosure = completion
@@ -241,7 +241,7 @@ class KYCircularShapeView: UIView {
         return layer as! CAShapeLayer
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

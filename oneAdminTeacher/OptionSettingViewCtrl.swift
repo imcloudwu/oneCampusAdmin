@@ -62,7 +62,7 @@ class OptionSettingViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
             self.navigationController?.popViewControllerAnimated(true)
         }
         else{
-            ShowErrorAlert(self, "錯誤", "至少需要兩個非空白選項")
+            ShowErrorAlert(self, title: "錯誤", msg: "至少需要兩個非空白選項")
         }
     }
     

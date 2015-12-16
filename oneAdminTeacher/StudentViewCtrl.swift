@@ -64,7 +64,7 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         cell.student = _displayData[indexPath.row]
         
         //UILongPressGestureRecognizer
-        var longPress = UILongPressGestureRecognizer(target: self, action: "LongPress:")
+        let longPress = UILongPressGestureRecognizer(target: self, action: "LongPress:")
         longPress.minimumPressDuration = 0.5
         
         cell.addGestureRecognizer(longPress)
@@ -122,11 +122,16 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         //println(rsp)
         
         if err != nil{
-            ShowErrorAlert(self,"取得資料發生錯誤",err.message)
+            ShowErrorAlert(self,title: "取得資料發生錯誤",msg: err.message)
             return retVal
         }
         
-        let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        let xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let students = xml?.root["Response"]["Student"].all {
             for stu in students{
@@ -144,7 +149,7 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
                 let custodianName = stu["CustodianName"].stringValue
                 let fatherName = stu["FatherName"].stringValue
                 let motherName = stu["MotherName"].stringValue
-                let freshmanPhoto = GetImageFromBase64String(stu["FreshmanPhoto"].stringValue, UIImage(named: "User-100.png"))
+                let freshmanPhoto = GetImageFromBase64String(stu["FreshmanPhoto"].stringValue, defaultImg: UIImage(named: "User-100.png"))
                 
                 let stuItem = Student(DSNS: ClassData.AccessPoint,ID: studentID, ClassID: ClassData.ID, ClassName: className, Name: studentName, SeatNo: seatNo, StudentNumber: studentNumber, Gender: gender, MailingAddress: mailingAddress, PermanentAddress: permanentAddress, ContactPhone: contactPhone, PermanentPhone: permanentPhone, CustodianName: custodianName, FatherName: fatherName, MotherName: motherName, Photo: freshmanPhoto)
                 
@@ -152,7 +157,7 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
             }
         }
         
-        retVal.sort{ $0.SeatNo.toInt() < $1.SeatNo.toInt() }
+        retVal.sortInPlace{ Int($0.SeatNo) < Int($1.SeatNo) }
 
         return retVal
     }
@@ -198,7 +203,7 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
     func LongPress(sender:UILongPressGestureRecognizer){
         
         if sender.state == UIGestureRecognizerState.Began{
-            var cell = sender.view as! StudentCell
+            let cell = sender.view as! StudentCell
             
             let menu = UIAlertController(title: "要對 \(cell.student.Name) 的家長發送訊息嗎?", message: "", preferredStyle: UIAlertControllerStyle.Alert)
             
@@ -220,12 +225,17 @@ class StudentViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSourc
         var rsp = con.sendRequest("main.GetParent", bodyContent: "<Request><StudentID>\(cell.student.ID)</StudentID></Request>", &err)
         
         if err != nil{
-            ShowErrorAlert(self, "錯誤", err.message)
+            ShowErrorAlert(self, title: "錯誤", msg: err.message)
         }
         else{
             var nserr : NSError?
             
-            var xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+            var xml: AEXMLDocument?
+            do {
+                xml = try AEXMLDocument(xmlData: rsp.dataValue)
+            } catch _ {
+                xml = nil
+            }
             
             var parentAccounts = [TeacherAccount]()
             

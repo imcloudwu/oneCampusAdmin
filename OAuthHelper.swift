@@ -40,33 +40,45 @@ public class OAuthHelper {
         return "\(OAuthHelper.ServiceAuthorize)?linkSignIn=\(linkSignIn)&client_id=\(self.clientID)&response_type=code&state=redirect_uri%3A%2F&redirect_uri=\(self.redirectUrl)&lang=zh-tw&scope=\(self.scope)"
     }
     
-    public func getAccessTokenAndRefreshToken(code: String, inout error: NSError?) -> (String, String)!{
+    public func getAccessTokenAndRefreshToken(code: String) throws -> (String, String){
+        var error: NSError! = NSError(domain: "Migrator", code: 0, userInfo: nil)
         
         let before = CFAbsoluteTimeGetCurrent()
         
-        let token = HttpClient.Get(getExchangeAccessTokenUrl(code), err: &error)
+        let token: NSData?
+        do {
+            token = try HttpClient.Get(getExchangeAccessTokenUrl(code))
+        } catch let error1 as NSError {
+            error = error1
+            token = nil
+        }
         
         let span = CFAbsoluteTimeGetCurrent() - before
-        println("Get Access Token Time：\(span)")
+        print("Get Access Token Time：\(span)")
         
         var json: JSON = JSON(data: token!)
         
         if let access = json["access_token"].string, let refresh = json["refresh_token"].string {
             return (access, refresh)
         } else {
-            return nil
+            throw error
         }
     }
     
-    public func renewAccessToken(refreshToken: String, inout error: NSError?) -> (String, String)!{
+    public func renewAccessToken(refreshToken: String) throws -> (String, String){
         let url = "\(OAuthHelper.ServiceExchangeAccessToken)?client_id=\(self.clientID)&client_secret=\(self.clientSecret)&redirect_uri=\(self.redirectUrl)&refresh_token=\(refreshToken)&grant_type=refresh_token&response_type=token"
         
         let before = CFAbsoluteTimeGetCurrent()
         
-        let token = HttpClient.Get(url, err: &error)
+        let token: NSData?
+        do {
+            token = try HttpClient.Get(url)
+        } catch _ {
+            token = nil
+        }
         
         let span = CFAbsoluteTimeGetCurrent() - before
-        println("Get Access Token Time：\(span)")
+        print("Get Access Token Time：\(span)")
         
         let str = NSString(data: token!, encoding: NSUTF8StringEncoding)
         
@@ -75,10 +87,8 @@ public class OAuthHelper {
         if let access = json["access_token"].string, let refresh = json["refresh_token"].string {
             return (access, refresh)
         } else {
-            error = NSError(domain: "auth.ischool.com.tw", code: 1,
+            throw NSError(domain: "auth.ischool.com.tw", code: 1,
                 userInfo: ["RawUrl": url, NSURLErrorKey: url,NSLocalizedDescriptionKey: json["error_description"].string!])
-            
-            return nil
         }
     }
     
@@ -86,7 +96,13 @@ public class OAuthHelper {
         let url = "\(OAuthHelper.ServiceME)?access_token=\(access)"
         
         var error: NSError?
-        let rsp = HttpClient.Get(url, err: &error)
+        let rsp: NSData?
+        do {
+            rsp = try HttpClient.Get(url)
+        } catch let error1 as NSError {
+            error = error1
+            rsp = nil
+        }
         var json: JSON = JSON(data: rsp!)
         
         return json["uuid"].string!

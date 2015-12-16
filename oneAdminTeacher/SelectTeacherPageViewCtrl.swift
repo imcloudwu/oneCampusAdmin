@@ -74,7 +74,7 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
         
         let data = DisplayItem[indexPath.row]
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("teacher") as? UITableViewCell
+        var cell = tableView.dequeueReusableCellWithIdentifier("teacher")
         
         if cell == nil{
             cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "teacher")
@@ -84,7 +84,7 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
         cell?.textLabel?.text = data.Name
         cell?.detailTextLabel?.text = data.Account
         
-        if contains(ChildTeacherSelector.Teachers, data){
+        if ChildTeacherSelector.Teachers.contains(data){
             cell?.accessoryType = UITableViewCellAccessoryType.Checkmark
         }
         else{
@@ -99,7 +99,7 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
         let data = DisplayItem[indexPath.row]
         let cell = tableView.cellForRowAtIndexPath(indexPath)
         
-        if contains(ChildTeacherSelector.Teachers, data){
+        if ChildTeacherSelector.Teachers.contains(data){
             let index = ChildTeacherSelector.IndexOf(data)
             ChildTeacherSelector.Teachers.removeAtIndex(index)
             cell?.accessoryType = UITableViewCellAccessoryType.None
@@ -130,7 +130,7 @@ class SelectTeacherPageViewCtrl: UIViewController,UITableViewDataSource,UITableV
         }
         else{
             
-            var founds = DataBase.filter({ t in
+            let founds = DataBase.filter({ t in
                 
                 if let x = t.Name.lowercaseString.rangeOfString(searchText.lowercaseString){
                     return true

@@ -120,7 +120,7 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
             }
         }
         
-        newData.sort{$0.Date > $1.Date}
+        newData.sortInPlace{$0.Date > $1.Date}
         
         let sumMItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "獎勵總計", IsClear: false, MA: ma, MB: mb, MC: mc, DA: 0, DB: 0, DC: 0)
         let maItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "大功", IsClear: false, MA: ma, MB: 0, MC: 0, DA: 0, DB: 0, DC: 0)
@@ -156,18 +156,23 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         var rsp = _con.SendRequest("discipline.GetStudentDiscipline", bodyContent: "<Request><RefStudentId>\(StudentData.ID)</RefStudentId></Request>", &err)
         
         if err != nil{
-            ShowErrorAlert(self,"取得資料發生錯誤",err.message)
+            ShowErrorAlert(self,title: "取得資料發生錯誤",msg: err.message)
             return retVal
         }
         
-        let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        let xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let disciplines = xml?.root["Response"]["Discipline"].all {
             for discipline in disciplines{
-                let occurDate = discipline.attributes["OccurDate"] as! String
-                let schoolYear = discipline.attributes["SchoolYear"] as! String
-                let semester = discipline.attributes["Semester"] as! String
-                let meritFlag = (discipline.attributes["MeritFlag"] as! String) == "1" ? DisciplineType.Merit : DisciplineType.Demerit
+                let occurDate = discipline.attributes["OccurDate"]
+                let schoolYear = discipline.attributes["SchoolYear"]
+                let semester = discipline.attributes["Semester"]
+                let meritFlag = discipline.attributes["MeritFlag"] == "1" ? DisciplineType.Merit : DisciplineType.Demerit
                 let reason = discipline["Reason"].stringValue
                 
                 var ma = 0
@@ -179,18 +184,19 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
                 var isClear = false
                 
                 if meritFlag == DisciplineType.Merit{
-                    ma = (discipline["Merit"].attributes["A"] as! String).intValue
-                    mb = (discipline["Merit"].attributes["B"] as! String).intValue
-                    mc = (discipline["Merit"].attributes["C"] as! String).intValue
+                    ma = (discipline["Merit"].attributes["A"]?.intValue)!
+                    mb = (discipline["Merit"].attributes["B"]?.intValue)!
+                    
+                    mc = (discipline["Merit"].attributes["C"]?.intValue)!
                 }
                 else{
-                    da = (discipline["Demerit"].attributes["A"] as! String).intValue
-                    db = (discipline["Demerit"].attributes["B"] as! String).intValue
-                    dc = (discipline["Demerit"].attributes["C"] as! String).intValue
-                    isClear = (discipline["Demerit"].attributes["Cleared"] as! String) == "是"
+                    da = (discipline["Demerit"].attributes["A"]?.intValue)!
+                    db = (discipline["Demerit"].attributes["B"]?.intValue)!
+                    dc = (discipline["Demerit"].attributes["C"]?.intValue)!
+                    isClear = discipline["Demerit"].attributes["Cleared"] == "是"
                 }
                 
-                var item = DisciplineItem(Type: meritFlag, Date: occurDate, SchoolYear: schoolYear, Semester: semester, Reason: reason, IsClear: isClear, MA: ma, MB: mb, MC: mc, DA: da, DB: db, DC: dc)
+                let item = DisciplineItem(Type: meritFlag, Date: occurDate!, SchoolYear: schoolYear!, Semester: semester!, Reason: reason, IsClear: isClear, MA: ma, MB: mb, MC: mc, DA: da, DB: db, DC: dc)
                 
                 retVal.append(item)
             }
@@ -208,7 +214,7 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         let data = _displayData[indexPath.row]
         
         if data.Type == DisciplineType.Summary{
-            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem") as? UITableViewCell
+            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem")
             
             if cell == nil{
                 cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "summaryItem")

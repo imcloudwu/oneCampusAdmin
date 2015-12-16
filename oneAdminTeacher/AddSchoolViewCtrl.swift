@@ -50,9 +50,9 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
     }
     
     func DsnsIsExist(address:String) -> Bool{
-        var tmp = DsnsItem(name: "", accessPoint: address)
+        let tmp = DsnsItem(name: "", accessPoint: address)
         
-        return contains(Global.DsnsList, tmp)
+        return Global.DsnsList.contains(tmp)
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
@@ -61,7 +61,7 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
         
-        var cell = self.tableView.dequeueReusableCellWithIdentifier("school") as? UITableViewCell
+        var cell = self.tableView.dequeueReusableCellWithIdentifier("school")
         
         if cell == nil{
             cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "school")
@@ -124,7 +124,7 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         searchBar.resignFirstResponder()
         self.view.endEditing(true)
         
-        newSearch(searchBar.text.lowercaseString)
+        newSearch(searchBar.text!.lowercaseString)
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
@@ -146,7 +146,12 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                     
                     var nserr : NSError?
                     
-                    let xml = AEXMLDocument(xmlData: response.dataValue, error: &nserr)
+                    let xml: AEXMLDocument?
+                    do {
+                        xml = try AEXMLDocument(xmlData: response.dataValue)
+                    } catch _ {
+                        xml = nil
+                    }
                     
                     if let schools = xml?.root["Response"]["School"].all{
                         
@@ -159,7 +164,7 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                     }
                     
                     self._DSNSDic = tmpDic
-                    self._display = tmpDic.keys.array
+                    self._display = Array(tmpDic.keys)
                 }
                 
                 self.tableView.reloadData()
@@ -181,14 +186,14 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         con.connect("https://auth.ischool.com.tw:8443/dsa/greening", "user", SecurityToken.createOAuthToken(Global.AccessToken), &err)
         
         if err != nil{
-            ShowErrorAlert(self, "過程發生錯誤", err.message)
+            ShowErrorAlert(self, title: "過程發生錯誤", msg: err.message)
             return
         }
         
         var rsp = con.sendRequest("DeleteApplication", bodyContent: "<Request><Application><AccessPoint>\(server)</AccessPoint><Type>dynpkg</Type></Application></Request>", &err)
         
         if err != nil{
-            ShowErrorAlert(self, "過程發生錯誤", err.message)
+            ShowErrorAlert(self, title: "過程發生錯誤", msg: err.message)
             return
         }
         
@@ -210,21 +215,21 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         
         self._DsnsItem = DsnsItem(name: "", accessPoint: server)
         
-        if !contains(Global.DsnsList,self._DsnsItem){
+        if !Global.DsnsList.contains(self._DsnsItem){
             
             var err : DSFault!
             var con = Connection()
             con.connect("https://auth.ischool.com.tw:8443/dsa/greening", "user", SecurityToken.createOAuthToken(Global.AccessToken), &err)
             
             if err != nil{
-                ShowErrorAlert(self, "過程發生錯誤", err.message)
+                ShowErrorAlert(self, title: "過程發生錯誤", msg: err.message)
                 return
             }
             
             var rsp = con.sendRequest("AddApplicationRef", bodyContent: "<Request><Applications><Application><AccessPoint>\(server)</AccessPoint><Type>dynpkg</Type></Application></Applications></Request>", &err)
             
             if err != nil{
-                ShowErrorAlert(self, "過程發生錯誤", err.message)
+                ShowErrorAlert(self, title: "過程發生錯誤", msg: err.message)
                 return
             }
             
@@ -238,23 +243,23 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         
         let target = "https://auth.ischool.com.tw/oauth/authorize.php?client_id=\(Global.clientID)&response_type=token&redirect_uri=http://_blank&scope=User.Mail,User.BasicInfo,1Campus.Notification.Read,1Campus.Notification.Send,*:auth.guest,*:\(Global.ContractName)&access_token=\(Global.AccessToken)"
         
-        var urlobj = NSURL(string: target)
-        var request = NSURLRequest(URL: urlobj!)
+        let urlobj = NSURL(string: target)
+        let request = NSURLRequest(URL: urlobj!)
         
         self.webView.loadRequest(request)
         self.webView.hidden = false
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError){
+    func webView(webView: UIWebView, didFailLoadWithError error: NSError?){
         
         //網路異常
-        if error.code == -1009 || error.code == -1003{
+        if error!.code == -1009 || error!.code == -1003{
             
-            if UpdateTokenFromError(error){
+            if UpdateTokenFromError(error!){
                 Goback()
             }
             else{
-                ShowErrorAlert(self, "連線過程發生錯誤", "若此情況重複發生,建議重登後再嘗試")
+                ShowErrorAlert(self, title: "連線過程發生錯誤", msg: "若此情況重複發生,建議重登後再嘗試")
             }
         }
     }
@@ -264,7 +269,7 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         var accessToken : String!
         var refreshToken : String!
         
-        if let url = error.userInfo?["NSErrorFailingURLStringKey"] as? String{
+        if let url = error.userInfo["NSErrorFailingURLStringKey"] as? String{
             
             let stringArray = url.componentsSeparatedByString("&")
             
@@ -297,8 +302,8 @@ class AddSchoolViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         
         Global.SchoolListChanged = true
         
-        let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("ClassQuery") as! UIViewController
+        let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("ClassQuery")
         
-        ChangeContentView(nextView)
+        ChangeContentView(nextView!)
     }
 }

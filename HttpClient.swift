@@ -11,26 +11,39 @@ public class HttpClient {
     
     public static var TrustServerList: Set<String> = Set<String>()
     
-    class func Get(url:String) -> NSData? {
-        var err: NSError?
-        return Get(url,err: &err)
-    }
+    //    class func Get(url:String) -> NSData? {
+    //
+    //        if let rsp = try? Get(url){
+    //            return rsp
+    //        }
+    //
+    //        return nil
+    //    }
     
-    class func Get(url:String, inout err: NSError?) -> NSData? {
-        
+    class func Get(url:String) throws -> NSData {
+        var err: NSError! = NSError(domain: "Migrator", code: 0, userInfo: nil)
         var response: NSURLResponse?
         var error: NSError?
         
-        var request = NSMutableURLRequest()
+        let request = NSMutableURLRequest()
         
         request.HTTPMethod = "GET"
         request.URL = NSURL(string: url)
         
-        var tokenData = NSURLConnection.sendSynchronousRequest(request,returningResponse: &response, error: &error)
+        var tokenData: NSData?
+        do {
+            tokenData = try NSURLConnection.sendSynchronousRequest(request,returningResponse: &response)
+        } catch let error1 as NSError {
+            error = error1
+            tokenData = nil
+        }
         
         err = error
         
-        return tokenData
+        if let value = tokenData {
+            return value
+        }
+        throw err
     }
     
     public class func Get(url:String, successCallback: ((response: String) -> Void), errorCallback : ((error: NSError) -> Void)! = nil, prepareCallback: ((request: NSMutableURLRequest) -> Void)! = nil) {
@@ -72,44 +85,64 @@ public class HttpClient {
         })
     }
     
-    public class func Post(url:String, body:String, inout err: NSError?) -> NSData? {
+    public class func Post(url:String, body:String) throws -> NSData {
+        var err: NSError! = NSError(domain: "Migrator", code: 0, userInfo: nil)
         var response: NSURLResponse?
         var error: NSError?
         
-        var request = NSMutableURLRequest()
+        let request = NSMutableURLRequest()
         
         request.HTTPMethod = "POST"
         request.HTTPBody = body.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
         request.URL = NSURL(string: url)
         
-        var tokenData = NSURLConnection.sendSynchronousRequest(request,returningResponse: &response, error: &error)
+        var tokenData: NSData?
+        do {
+            tokenData = try NSURLConnection.sendSynchronousRequest(request,returningResponse: &response)
+        } catch let error1 as NSError {
+            error = error1
+            tokenData = nil
+        }
         
         err = error
         
-        return tokenData
+        if let value = tokenData {
+            return value
+        }
+        throw err
     }
     
-    public class func Put(url:String, body:String, inout err: NSError?) -> NSData? {
+    public class func Put(url:String, body:String) throws -> NSData {
+        var err: NSError! = NSError(domain: "Migrator", code: 0, userInfo: nil)
         var response: NSURLResponse?
         var error: NSError?
         
-        var request = NSMutableURLRequest()
+        let request = NSMutableURLRequest()
         
         request.HTTPMethod = "PUT"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.HTTPBody = body.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
         request.URL = NSURL(string: url)
         
-        var tokenData = NSURLConnection.sendSynchronousRequest(request,returningResponse: &response, error: &error)
+        var tokenData: NSData?
+        do {
+            tokenData = try NSURLConnection.sendSynchronousRequest(request,returningResponse: &response)
+        } catch let error1 as NSError {
+            error = error1
+            tokenData = nil
+        }
         
         err = error
         
-        return tokenData
+        if let value = tokenData {
+            return value
+        }
+        throw err
     }
     
     public class func SendRequest(url:String, successCallback: ((response: String) -> Void), errorCallback : ((error: NSError) -> Void)! = nil, prepareCallback: ((request: NSMutableURLRequest) -> Void)! = nil){
         
-        var req = NSMutableURLRequest()
+        let req = NSMutableURLRequest()
         req.URL = NSURL(string:url)
         
         prepareCallback?(request: req)
@@ -122,7 +155,7 @@ public class HttpClient {
                 errorCallback(error: err)
         })
         
-        var conn = NSURLConnection(request: req, delegate: delegate, startImmediately: false)
+        let conn = NSURLConnection(request: req, delegate: delegate, startImmediately: false)
         conn!.start()
     }
     
@@ -166,8 +199,9 @@ public class HttpClient {
         func connection(connection: NSURLConnection, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge) {
             if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
                 if self.trust_list.contains(challenge.protectionSpace.host) {
-                    challenge.sender.useCredential(NSURLCredential(forTrust: challenge.protectionSpace.serverTrust), forAuthenticationChallenge: challenge)
-                    challenge.sender.continueWithoutCredentialForAuthenticationChallenge(challenge)
+                    
+                    challenge.sender!.useCredential(NSURLCredential(forTrust: challenge.protectionSpace.serverTrust!), forAuthenticationChallenge: challenge)
+                    challenge.sender!.continueWithoutCredentialForAuthenticationChallenge(challenge)
                 }
             }
         }

@@ -140,7 +140,7 @@ class SemesterScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         //沒處理過的領域,直接列出該科目
         var tmp = [DisplayItem]()
         for subject in currentData.Subjects{
-            if !contains(domainList, subject.Domain){
+            if !domainList.contains(subject.Domain){
                 tmp.append(subject.GetJhDisplayItem())
             }
         }
@@ -245,24 +245,33 @@ class SemesterScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         var rsp = _con.SendRequest("semesterScore.GetStudentSemsScore", bodyContent: "<Request><All></All><RefStudentId>\(StudentData.ID)</RefStudentId></Request>", &err)
         
         if err != nil{
-            ShowErrorAlert(self,"取得資料發生錯誤",err.message)
+            ShowErrorAlert(self,title: "取得資料發生錯誤",msg: err.message)
             return retVal
         }
         
-        let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        let xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let semsSubjScores = xml?.root["Response"]["SemsSubjScore"].all{
             
             for ss in semsSubjScores{
                 
-                let schoolYear = ss.attributes["SchoolYear"] as! String
-                let semester = ss.attributes["Semester"] as! String
+                let va = "<root>" + ss["ScoreInfo"].stringValue + "</root>"
                 
-                var scoreInfoItem = ScoreInfoItem(SchoolYear: schoolYear, Semester: semester, LearnDomainScore: "", CourseLearnScore: "", Subjects: [SemesterSubjectItem](), Domains: [SemesterDomainItem](), IsJH: false)
+                let child = try? AEXMLDocument(xmlData: va.dataValue)
+                
+                let schoolYear = ss.attributes["SchoolYear"]
+                let semester = ss.attributes["Semester"]
+                
+                var scoreInfoItem = ScoreInfoItem(SchoolYear: schoolYear!, Semester: semester!, LearnDomainScore: "", CourseLearnScore: "", Subjects: [SemesterSubjectItem](), Domains: [SemesterDomainItem](), IsJH: false)
                 
                 //有抓到學習領域成績就以國中處理
-                if let learnDomainScore = ss["ScoreInfo"]["LearnDomainScore"].first?.stringValue ,
-                    let courseLearnScore = ss["ScoreInfo"]["CourseLearnScore"].first?.stringValue{
+                if let learnDomainScore = child?.root["LearnDomainScore"].first?.stringValue ,
+                    let courseLearnScore = child?.root["CourseLearnScore"].first?.stringValue{
                     scoreInfoItem.LearnDomainScore = learnDomainScore
                     scoreInfoItem.CourseLearnScore = courseLearnScore
                     scoreInfoItem.IsJH = true
@@ -271,30 +280,31 @@ class SemesterScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
                 //國中資料解析
                 if scoreInfoItem.IsJH{
                     //科目成績
-                    if let infos = ss["ScoreInfo"]["SemesterSubjectScoreInfo"]["Subject"].all{
+                    if let infos = child?.root["SemesterSubjectScoreInfo"]["Subject"].all{
                         
                         for info in infos {
-                            let subject = info.attributes["科目"] as! String
-                            let credit = (info.attributes["權數"] as! String).intValue
-                            let period = info.attributes["節數"] as! String
-                            let domain = info.attributes["領域"] as! String
-                            let score = info.attributes["成績"] as! String
+                            let subject = info.attributes["科目"]
+                            let credit = info.attributes["權數"]?.intValue
+                            let period = info.attributes["節數"]
+                            let domain = info.attributes["領域"]
+                            let score = info.attributes["成績"]
                             
-                            let subjecItem = SemesterSubjectItem(SchoolYear: schoolYear, Semester: semester, Subject: subject, Domain: domain, Period: period, Credit: credit, Score: score, IsRequire: false, IsSchoolPlan: false, IsReach: score.doubleValue > 60, IsLearning: false)
+                            let subjecItem = SemesterSubjectItem(SchoolYear: schoolYear!, Semester: semester!, Subject: subject!, Domain: domain!, Period: period!, Credit: credit!, Score: score!, IsRequire: false, IsSchoolPlan: false, IsReach: score!.doubleValue > 60, IsLearning: false)
                             
                             scoreInfoItem.Subjects.append(subjecItem)
+                            
                         }
                     }
                     //領域成績
-                    if let infos = ss["ScoreInfo"]["Domains"]["Domain"].all{
+                    if let infos = child?.root["Domains"]["Domain"].all{
                         
                         for info in infos {
-                            let domain = info.attributes["領域"] as! String
-                            let credit = (info.attributes["權數"] as! String).intValue
-                            let period = info.attributes["節數"] as! String
-                            let score = info.attributes["成績"] as! String
+                            let domain = info.attributes["領域"]
+                            let credit = info.attributes["權數"]?.intValue
+                            let period = info.attributes["節數"]
+                            let score = info.attributes["成績"]
                             
-                            let domainItem = SemesterDomainItem(SchoolYear: schoolYear, Semester: semester, Domain: domain, Period: period, Credit: credit, Score: score)
+                            let domainItem = SemesterDomainItem(SchoolYear: schoolYear!, Semester: semester!, Domain: domain!, Period: period!, Credit: credit!, Score: score!)
                             
                             scoreInfoItem.Domains.append(domainItem)
                         }
@@ -303,18 +313,18 @@ class SemesterScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
                 }
                 else{
                     //高中資料解析
-                    if let infos = ss["ScoreInfo"]["SemesterSubjectScoreInfo"]["Subject"].all{
+                    if let infos = child?.root["SemesterSubjectScoreInfo"]["Subject"].all{
                         
                         for info in infos {
-                            let subject = info.attributes["科目"] as! String
-                            let credit = (info.attributes["開課學分數"] as! String).intValue
-                            let isRequire = (info.attributes["修課必選修"] as! String) == "必修" ? true : false
-                            let isSchoolPlan = (info.attributes["修課校部訂"] as! String) == "校訂" ? true : false
-                            let isReach = (info.attributes["是否取得學分"] as! String) == "是" ? true : false
-                            let isLearning = (info.attributes["開課分項類別"] as! String) == "實習科目" ? true : false
-                            let score = info.attributes["原始成績"] as! String
+                            let subject = info.attributes["科目"]
+                            let credit = info.attributes["開課學分數"]?.intValue
+                            let isRequire = info.attributes["修課必選修"] == "必修" ? true : false
+                            let isSchoolPlan = info.attributes["修課校部訂"] == "校訂" ? true : false
+                            let isReach = info.attributes["是否取得學分"] == "是" ? true : false
+                            let isLearning = info.attributes["開課分項類別"] == "實習科目" ? true : false
+                            let score = info.attributes["原始成績"]
                             
-                            let subjecItem = SemesterSubjectItem(SchoolYear: schoolYear, Semester: semester, Subject: subject, Domain: "", Period: "", Credit: credit, Score: score, IsRequire: isRequire, IsSchoolPlan: isSchoolPlan, IsReach: isReach, IsLearning: isLearning)
+                            let subjecItem = SemesterSubjectItem(SchoolYear: schoolYear!, Semester: semester!, Subject: subject!, Domain: "", Period: "", Credit: credit!, Score: score!, IsRequire: isRequire, IsSchoolPlan: isSchoolPlan, IsReach: isReach, IsLearning: isLearning)
                             
                             scoreInfoItem.Subjects.append(subjecItem)
                         }
@@ -338,7 +348,7 @@ class SemesterScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDat
         let data = _displayData[indexPath.row]
         
         if data.OtherInfo == "summaryItem"{
-            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem") as? UITableViewCell
+            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem")
             
             if cell == nil{
                 cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "summaryItem")

@@ -41,7 +41,7 @@ class StudentDetailViewCtrl: UIViewController {
         var pics = ["background.png","background5.png"]
         let randomIndex = Int(arc4random_uniform(2))
         
-        var background = UIImageView(image: UIImage(named: pics[randomIndex]))
+        let background = UIImageView(image: UIImage(named: pics[randomIndex]))
         background.frame = SubTitleView.bounds
         //nback.contentMode = UIViewContentMode.ScaleAspectFill
         SubTitleView.insertSubview(background, atIndex: 0)
@@ -62,7 +62,7 @@ class StudentDetailViewCtrl: UIViewController {
         PhotoImage.layer.borderWidth = 3.0
         PhotoImage.layer.borderColor = UIColor.whiteColor().CGColor
         
-        var tap = UITapGestureRecognizer(target: self, action: "DisplayPhoto")
+        let tap = UITapGestureRecognizer(target: self, action: "DisplayPhoto")
         PhotoImage.addGestureRecognizer(tap)
         
         if !IsClassStudent{
@@ -165,7 +165,7 @@ class StudentDetailViewCtrl: UIViewController {
         
         //newController.didMoveToParentViewController(self)
         
-        for sub in EmbedView.subviews as! [UIView]{
+        for sub in EmbedView.subviews {
             sub.removeFromSuperview()
         }
         

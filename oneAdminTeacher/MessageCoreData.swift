@@ -23,10 +23,10 @@ class MessageCoreData{
         var needInsert = true
         
         //update
-        if let fetchResults = managedObjectContext.executeFetchRequest(fetchRequest, error: nil) as? [NSManagedObject] {
+        if let fetchResults = (try? managedObjectContext.executeFetchRequest(fetchRequest)) as? [NSManagedObject] {
             if fetchResults.count != 0 {
                 
-                var managedObject = fetchResults[0]
+                let managedObject = fetchResults[0]
                 
                 //被改成已讀的才必須要更新
                 if !msg.IsNew{
@@ -62,7 +62,10 @@ class MessageCoreData{
             myObject.setValue(msg.Voted, forKey: "voted")
         }
         
-        managedObjectContext.save(nil)
+        do {
+            try managedObjectContext.save()
+        } catch _ {
+        }
     }
     
     //Core Data using
@@ -76,7 +79,7 @@ class MessageCoreData{
         
         var error: NSError?
         
-        let results = managedObjectContext.executeFetchRequest(fetchRequest, error: &error) as! [NSManagedObject]
+        let results = (try! managedObjectContext.executeFetchRequest(fetchRequest)) as! [NSManagedObject]
         
         for obj in results {
             let id = obj.valueForKey("id") as! String
@@ -97,7 +100,7 @@ class MessageCoreData{
             //_studentData.append(Student(Photo: UIImage(data: photo), ClassName : class_name, Name: name, Phone: phone))
         }
         
-        retVal.sort({ $0.Date > $1.Date })
+        retVal.sortInPlace({ $0.Date > $1.Date })
         
         return retVal
     }
@@ -108,13 +111,16 @@ class MessageCoreData{
         let managedObjectContext = appDelegate.managedObjectContext!
         let fetchRequest = NSFetchRequest(entityName: "Message")
         
-        let results = managedObjectContext.executeFetchRequest(fetchRequest, error: nil) as! [NSManagedObject]
+        let results = (try! managedObjectContext.executeFetchRequest(fetchRequest)) as! [NSManagedObject]
         
         for obj in results {
             managedObjectContext.deleteObject(obj)
         }
         
-        managedObjectContext.save(nil)
+        do {
+            try managedObjectContext.save()
+        } catch _ {
+        }
     }
     
     //Core Data using
@@ -124,13 +130,16 @@ class MessageCoreData{
         let fetchRequest = NSFetchRequest(entityName: "Message")
         fetchRequest.predicate = NSPredicate(format: "id=%@", msg.Id)
         
-        let results = managedObjectContext.executeFetchRequest(fetchRequest, error: nil) as! [NSManagedObject]
+        let results = (try! managedObjectContext.executeFetchRequest(fetchRequest)) as! [NSManagedObject]
         
         for obj in results {
             managedObjectContext.deleteObject(obj)
         }
         
-        managedObjectContext.save(nil)
+        do {
+            try managedObjectContext.save()
+        } catch _ {
+        }
     }
     
     static func GetCount() -> Int{
@@ -139,7 +148,7 @@ class MessageCoreData{
         let managedObjectContext = appDelegate.managedObjectContext!
         let fetchRequest = NSFetchRequest(entityName: "Message")
         
-        let results = managedObjectContext.executeFetchRequest(fetchRequest, error: nil) as! [NSManagedObject]
+        let results = (try! managedObjectContext.executeFetchRequest(fetchRequest)) as! [NSManagedObject]
         
         return results.count
     }

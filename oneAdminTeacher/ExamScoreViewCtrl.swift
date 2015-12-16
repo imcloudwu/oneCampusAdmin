@@ -140,12 +140,12 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         if _isJH{
             _ExamList.removeAll(keepCapacity: false)
             
-            var datas = GetMatchExamScoreItem(nil)
+            let datas = GetMatchExamScoreItem(nil)
             
             //datas.sort({$0.DisplayOrder < $1.DisplayOrder})
             
             for data in datas{
-                if !contains(_ExamList, data.Exam){
+                if !_ExamList.contains(data.Exam){
                     _ExamList.append(data.Exam)
                 }
             }
@@ -166,8 +166,8 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         self._CurrentExam = examName
         var displayData = [DisplayItem]()
         
-        var matchDatas = GetMatchExamScoreItem(examName)
-        var domains = GetDomainList(matchDatas)
+        let matchDatas = GetMatchExamScoreItem(examName)
+        let domains = GetDomainList(matchDatas)
         
         //將相同領域的資料排在一起
         var collections = [String:[ExamScoreItem]]()
@@ -184,7 +184,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
             
             //displayData.append(DisplayItem(Title: domain.Name, Value: "socre here", OtherInfo: "summaryItem", ColorAlarm: false))
             
-            var items : [ExamScoreItem] = collections[domain.Name]!
+            let items : [ExamScoreItem] = collections[domain.Name]!
             
             var sumCredit = Double(0)
             var sumScore = Double(0)
@@ -226,8 +226,8 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         
         var displayData = [DisplayItem]()
         
-        var matchDatas = GetMatchExamScoreItem(nil)
-        var subjects = GetSubjectList(matchDatas)
+        let matchDatas = GetMatchExamScoreItem(nil)
+        let subjects = GetSubjectList(matchDatas)
         
         //將相同課程的資料排在一起
         var collections = [String:[ExamScoreItem]]()
@@ -244,7 +244,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
             
             displayData.append(DisplayItem(Title: subject.Name, Value: "", OtherInfo: "summaryItem", ColorAlarm: false))
             
-            var items : [ExamScoreItem] = collections[subject.CourseID]!
+            let items : [ExamScoreItem] = collections[subject.CourseID]!
             
             //items.sort({$0.DisplayOrder < $1.DisplayOrder})
             
@@ -276,11 +276,16 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
     
     func SetScoreCalcRule(){
         var err : DSFault!
-        var rsp = _con.SendRequest("examScore.GetScoreCalcRule", bodyContent: "<Request><StudentID>\(StudentData.ID)</StudentID></Request>", &err)
+        let rsp = _con.SendRequest("examScore.GetScoreCalcRule", bodyContent: "<Request><StudentID>\(StudentData.ID)</StudentID></Request>", &err)
         
         var nserr : NSError?
         
-        let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        let xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let subjectScales = xml?.root["ScoreCalcRule"]["SubjectScales"].stringValue{
             _SubjectScales = subjectScales.int16Value
@@ -297,31 +302,37 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         var retVal = [ExamScoreItem]()
         
         var err : DSFault!
-        var rsp = _con.SendRequest("examScore.GetExamScoreSH", bodyContent: "<Request><Condition><StudentID>\(StudentData.ID)</StudentID></Condition></Request>", &err)
+        let rsp = _con.SendRequest("examScore.GetExamScoreSH", bodyContent: "<Request><Condition><StudentID>\(StudentData.ID)</StudentID></Condition></Request>", &err)
         
         var nserr : NSError?
         
-        let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        let xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let semes = xml?.root["ExamScoreList"]["Seme"].all{
             for seme in semes{
-                let schoolYear = seme.attributes["SchoolYear"] as! String
-                let semester = seme.attributes["Semester"] as! String
+                let schoolYear = seme.attributes["SchoolYear"]
+                let semester = seme.attributes["Semester"]
                 
                 if let courses = seme["Course"].all{
                     for course in courses{
                         
-                        let courseID = course.attributes["CourseID"] as! String
-                        let subject = course.attributes["Subject"] as! String
-                        let credit = course.attributes["Credit"] as! String
+                        let courseID = course.attributes["CourseID"]
+                        let subject = course.attributes["Subject"]
+                        let credit = course.attributes["Credit"]
                         
                         if let exams = course["Exam"].all{
                             for exam in exams{
-                                let examDisplayOrder = (exam.attributes["ExamDisplayOrder"] as! String).intValue
-                                let examName = exam.attributes["ExamName"] as! String
-                                let score = exam["ScoreDetail"].attributes["Score"] as! String
+                                let examDisplayOrder = exam.attributes["ExamDisplayOrder"]?.intValue
+                                let examName = exam.attributes["ExamName"]
                                 
-                                let item = ExamScoreItem(SchoolYear: schoolYear, Semester: semester, CourseID: courseID,Domain: "", Subject: subject, Credit: credit, Exam: examName, Score: score, AssignmentScore: "", DisplayOrder: examDisplayOrder, ScorePercentage: 0)
+                                let score = exam["ScoreDetail"].attributes["Score"]
+                                
+                                let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!,Domain: "", Subject: subject!, Credit: credit!, Exam: examName!, Score: score!, AssignmentScore: "", DisplayOrder: examDisplayOrder!, ScorePercentage: 0)
                                 
                                 retVal.append(item)
                             }
@@ -342,40 +353,46 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         var retVal = [ExamScoreItem]()
         
         var err : DSFault!
-        var rsp = _con.SendRequest("examScore.GetExamScoreJH", bodyContent: "<Request><Condition><StudentID>\(StudentData.ID)</StudentID></Condition></Request>", &err)
+        let rsp = _con.SendRequest("examScore.GetExamScoreJH", bodyContent: "<Request><Condition><StudentID>\(StudentData.ID)</StudentID></Condition></Request>", &err)
         
         var nserr : NSError?
         
-        let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        let xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let semes = xml?.root["ExamScoreList"]["Seme"].all{
             for seme in semes{
-                let schoolYear = seme.attributes["SchoolYear"] as! String
-                let semester = seme.attributes["Semester"] as! String
+                let schoolYear = seme.attributes["SchoolYear"]
+                let semester = seme.attributes["Semester"]
                 
                 if let courses = seme["Course"].all{
                     
                     for course in courses{
                         
-                        let courseID = course.attributes["CourseID"] as! String
-                        let subject = course.attributes["Subject"] as! String
-                        let credit = course.attributes["Credit"] as! String
-                        let domain = course.attributes["Domain"] as! String
+                        let courseID = course.attributes["CourseID"]
+                        let subject = course.attributes["Subject"]
+                        let credit = course.attributes["Credit"]
+                        let domain = course.attributes["Domain"]
                         
                         let scorePercentage = course["FixTime"]["Extension"]["ScorePercentage"].stringValue.doubleValue
                         
                         //針對高雄的資料新增平時成績
                         if !_isHS , let ordinarilyScore = course["FixExtension"]["Extension"]["OrdinarilyScore"].first?.stringValue{
-                            let item = ExamScoreItem(SchoolYear: schoolYear, Semester: semester, CourseID: courseID, Domain: domain, Subject: subject, Credit: credit, Exam: "平時成績", Score: ordinarilyScore, AssignmentScore: "", DisplayOrder: 99, ScorePercentage: scorePercentage)
+                            let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!, Domain: domain!, Subject: subject!, Credit: credit!, Exam: "平時成績", Score: ordinarilyScore, AssignmentScore: "", DisplayOrder: 99, ScorePercentage: scorePercentage)
                             
                             retVal.append(item)
                         }
                         
                         if let exams = course["Exam"].all{
                             for exam in exams{
-                                let examDisplayOrder = (exam.attributes["ExamDisplayOrder"] as! String).intValue
-                                let examName = exam.attributes["ExamName"] as! String
+                                let examDisplayOrder = exam.attributes["ExamDisplayOrder"]?.intValue
+                                let examName = exam.attributes["ExamName"]
                                 var score = ""
+                                
                                 var assignmentScore = ""
                                 
                                 if let tmpScore = exam["ScoreDetail"]["Extension"]["Extension"]["Score"].first?.stringValue{
@@ -386,7 +403,8 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                                     assignmentScore = tmpAssignmentScore
                                 }
                                 
-                                let item = ExamScoreItem(SchoolYear: schoolYear, Semester: semester, CourseID: courseID, Domain: domain, Subject: subject, Credit: credit, Exam: examName, Score: score, AssignmentScore: assignmentScore, DisplayOrder: examDisplayOrder, ScorePercentage: scorePercentage)
+                                let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!, Domain: domain!, Subject: subject!, Credit: credit!, Exam:
+                                    examName!, Score: score, AssignmentScore: assignmentScore, DisplayOrder: examDisplayOrder!, ScorePercentage: scorePercentage)
                                 
                                 retVal.append(item)
                             }
@@ -419,7 +437,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         }
         
         if _isJH {
-            retVal.sort({$0.DisplayOrder < $1.DisplayOrder})
+            retVal.sortInPlace({$0.DisplayOrder < $1.DisplayOrder})
         }
         
         return retVal
@@ -432,7 +450,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         for data in sourceDatas{
             let domain = Domain(Name: data.Domain)
             
-            if !contains(retVal, domain){
+            if !retVal.contains(domain){
                 retVal.append(domain)
             }
         }
@@ -447,7 +465,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         for data in sourceDatas{
             let subject = Subject(CourseID: data.CourseID,Name: data.Subject)
             
-            if !contains(retVal, subject){
+            if !retVal.contains(subject){
                 retVal.append(subject)
             }
         }
@@ -466,13 +484,18 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         //encode成功呼叫查詢
         if let encodingName = StudentData.DSNS.UrlEncoding{
             
-            var data = HttpClient.Get("http://dsns.1campus.net/campusman.ischool.com.tw/config.public/GetSchoolList?content=%3CRequest%3E%3CMatch%3E\(encodingName)%3C/Match%3E%3CPagination%3E%3CPageSize%3E10%3C/PageSize%3E%3CStartPage%3E1%3C/StartPage%3E%3C/Pagination%3E%3C/Request%3E")
+            let data = try? HttpClient.Get("http://dsns.1campus.net/campusman.ischool.com.tw/config.public/GetSchoolList?content=%3CRequest%3E%3CMatch%3E\(encodingName)%3C/Match%3E%3CPagination%3E%3CPageSize%3E10%3C/PageSize%3E%3CStartPage%3E1%3C/StartPage%3E%3C/Pagination%3E%3C/Request%3E")
             
             if let rsp = data{
                 
                 var nserr : NSError?
                 
-                let xml = AEXMLDocument(xmlData: rsp, error: &nserr)
+                let xml: AEXMLDocument?
+                do {
+                    xml = try AEXMLDocument(xmlData: rsp)
+                } catch _ {
+                    xml = nil
+                }
                 
                 if let coreSystem = xml?.root["Response"]["School"]["CoreSystem"].stringValue{
                     
@@ -508,7 +531,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         
         if data.OtherInfo == "summaryItem"{
             
-            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem") as? UITableViewCell
+            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem")
             
             if cell == nil{
                 cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "summaryItem")

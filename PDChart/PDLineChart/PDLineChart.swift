@@ -43,7 +43,7 @@ class PDLineChart: PDChart {
         
         self.dataItem = dataItem
         
-        var axesDataItem: PDChartAxesComponentDataItem = PDChartAxesComponentDataItem()
+        let axesDataItem: PDChartAxesComponentDataItem = PDChartAxesComponentDataItem()
         axesDataItem.targetView = self
         axesDataItem.featureH = self.getFeatureHeight()
         axesDataItem.featureW = self.getFeatureWidth()
@@ -57,7 +57,7 @@ class PDLineChart: PDChart {
         axesComponent = PDChartAxesComponent(dataItem: axesDataItem)
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -75,7 +75,7 @@ class PDLineChart: PDChart {
         }
         
         //绘图layer
-        var chartLayer: CAShapeLayer = CAShapeLayer()
+        let chartLayer: CAShapeLayer = CAShapeLayer()
         chartLayer.lineCap = kCALineCapRound
         chartLayer.lineJoin = kCALineJoinRound
         chartLayer.fillColor = UIColor.whiteColor().CGColor
@@ -88,14 +88,14 @@ class PDLineChart: PDChart {
         //画线段
         UIGraphicsBeginImageContext(self.frame.size)
         
-        var progressLine: UIBezierPath = UIBezierPath()
+        let progressLine: UIBezierPath = UIBezierPath()
         
-        var basePoint: CGPoint = axesComponent.getBasePoint()
-        var xAxesWidth: CGFloat = axesComponent.getXAxesWidth()
-        var yAxesHeight: CGFloat = axesComponent.getYAxesHeight()
+        let basePoint: CGPoint = axesComponent.getBasePoint()
+        let xAxesWidth: CGFloat = axesComponent.getXAxesWidth()
+        let yAxesHeight: CGFloat = axesComponent.getYAxesHeight()
         for var i = 0; i < self.dataItem.pointArray!.count; i++ {
-            var point: CGPoint = self.dataItem.pointArray![i]
-            var pixelPoint: CGPoint = CGPoint(x: basePoint.x + point.x / self.dataItem.xMax * xAxesWidth, y: basePoint.y - point.y / self.dataItem.yMax * yAxesHeight)//转换为可以绘制的，屏幕中的像素点
+            let point: CGPoint = self.dataItem.pointArray![i]
+            let pixelPoint: CGPoint = CGPoint(x: basePoint.x + point.x / self.dataItem.xMax * xAxesWidth, y: basePoint.y - point.y / self.dataItem.yMax * yAxesHeight)//转换为可以绘制的，屏幕中的像素点
             
             if i == 0 {
                 progressLine.moveToPoint(pixelPoint)
@@ -110,7 +110,7 @@ class PDLineChart: PDChart {
         
         //动画
         CATransaction.begin()
-        var pathAnimation: CABasicAnimation = CABasicAnimation(keyPath: "strokeEnd")
+        let pathAnimation: CABasicAnimation = CABasicAnimation(keyPath: "strokeEnd")
         pathAnimation.duration = 1.0
         pathAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         pathAnimation.fromValue = 0.0
@@ -132,7 +132,7 @@ class PDLineChart: PDChart {
     override func drawRect(rect: CGRect) {
         super.drawRect(rect)
         
-        var context: CGContext = UIGraphicsGetCurrentContext()
+        let context: CGContext = UIGraphicsGetCurrentContext()!
         axesComponent.strokeAxes(context)
     }
 }

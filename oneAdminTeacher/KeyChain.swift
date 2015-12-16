@@ -11,6 +11,9 @@ let kSecMatchLimitOneValue = NSString(format: kSecMatchLimitOne)
 
 class Keychain {
     
+    private var service = ""
+    private var group = ""
+    
     class func save(key: String, data: NSData) -> Bool {
         let query = [
             kSecClassValue : kSecClassGenericPasswordValue,
@@ -31,12 +34,23 @@ class Keychain {
             kSecReturnDataValue  : kCFBooleanTrue,
             kSecMatchLimitValue  : kSecMatchLimitOneValue ]
         
-        var dataTypeRef :Unmanaged<AnyObject>?
+        //        let dataTypeRef : UnsafeMutablePointer<AnyObject?>
+        //
+        //        let status: OSStatus = SecItemCopyMatching(query, dataTypeRef)
+        //
+        //        if status == noErr {
+        //            return (dataTypeRef.takeRetainedValue() as! NSData)
+        //        } else {
+        //            return nil
+        //        }
         
-        let status: OSStatus = SecItemCopyMatching(query, &dataTypeRef)
+        var data: AnyObject?
         
-        if status == noErr {
-            return (dataTypeRef!.takeRetainedValue() as! NSData)
+        let status = withUnsafeMutablePointer(&data) {
+            SecItemCopyMatching(query, UnsafeMutablePointer($0))
+        }
+        if status == errSecSuccess {
+            return data as? NSData
         } else {
             return nil
         }

@@ -112,8 +112,8 @@ class PrepareViewCtrl: UIViewController {
                                 EnableSideMenu()
                                 
                                 //let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("ClassQuery") as! UIViewController
-                                let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("ClassQuery") as! UIViewController
-                                ChangeContentView(nextView)
+                                let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("ClassQuery")
+                                ChangeContentView(nextView!)
                             }
                             
                         }
@@ -156,17 +156,22 @@ class PrepareViewCtrl: UIViewController {
         
         if let at = Global.AccessToken{
             if con.connect("https://auth.ischool.com.tw:8443/dsa/greening", "user", SecurityToken.createOAuthToken(at), &dserr){
-                var rsp = con.sendRequest("GetApplicationListRef", bodyContent: "<Request><Type>dynpkg</Type></Request>", &dserr)
+                let rsp = con.sendRequest("GetApplicationListRef", bodyContent: "<Request><Type>dynpkg</Type></Request>", &dserr)
                 
-                let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+                let xml: AEXMLDocument?
+                do {
+                    xml = try AEXMLDocument(xmlData: rsp.dataValue)
+                } catch _ {
+                    xml = nil
+                }
                 //println(xml?.xmlString)
                 
                 if let apps = xml?.root["Response"]["User"]["App"].all {
                     for app in apps{
-                        let title = app.attributes["Title"] as! String
-                        let accessPoint = app.attributes["AccessPoint"] as! String
-                        let dsns = DsnsItem(name: title, accessPoint: accessPoint)
-                        if !contains(dsnsList,dsns){
+                        let title = app.attributes["Title"]
+                        let accessPoint = app.attributes["AccessPoint"]
+                        let dsns = DsnsItem(name: title!, accessPoint: accessPoint!)
+                        if !dsnsList.contains(dsns){
                             dsnsList.append(dsns)
                         }
                     }
@@ -174,10 +179,10 @@ class PrepareViewCtrl: UIViewController {
                 
                 if let apps = xml?.root["Response"]["Domain"]["App"].all {
                     for app in apps{
-                        let title = app.attributes["Title"] as! String
-                        let accessPoint = app.attributes["AccessPoint"] as! String
-                        let dsns = DsnsItem(name: title, accessPoint: accessPoint)
-                        if !contains(dsnsList,dsns){
+                        let title = app.attributes["Title"]
+                        let accessPoint = app.attributes["AccessPoint"]
+                        let dsns = DsnsItem(name: title!, accessPoint: accessPoint!)
+                        if !dsnsList.contains(dsns){
                             dsnsList.append(dsns)
                         }
                     }
@@ -194,7 +199,7 @@ class PrepareViewCtrl: UIViewController {
         Global.MyName = "My name"
         Global.MyEmail = "My e-mail"
         
-        var rsp = HttpClient.Get("https://auth.ischool.com.tw/services/me.php?access_token=\(Global.AccessToken)")
+        let rsp = try? HttpClient.Get("https://auth.ischool.com.tw/services/me.php?access_token=\(Global.AccessToken)")
         
         //println(NSString(data: rsp!, encoding: NSUTF8StringEncoding))
         

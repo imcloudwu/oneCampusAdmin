@@ -61,7 +61,7 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
         //            PieDataItem(description: nil, color: middleGreen, percentage: 0.1),
         //            PieDataItem(description: "third pie", color: deepGreen, percentage: 0.6)]
         
-        var dataItem: PDPieChartDataItem = PDPieChartDataItem()
+        let dataItem: PDPieChartDataItem = PDPieChartDataItem()
         dataItem.pieWidth = 100
         dataItem.pieMargin = 35
         
@@ -82,7 +82,7 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
             
             if total > 0 {
                 
-                var percentage : Double = Double(vt.Value) / total
+                let percentage : Double = Double(vt.Value) / total
                 
                 let round = (percentage.Round(2) * 100).Round(0)
                 
@@ -92,7 +92,7 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
             }
             else{
                 
-                var percentage : Double = 1 / Double(VoteItems.count)
+                let percentage : Double = 1 / Double(VoteItems.count)
                 
                 let round = (percentage.Round(2) * 100).Round(0)
                 
@@ -104,7 +104,7 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
         
         dataItem.dataArray = items
         
-        var pieChart: PDPieChart = PDPieChart(frame: CGRectMake(0, 0, 320, 320), dataItem: dataItem)
+        let pieChart: PDPieChart = PDPieChart(frame: CGRectMake(0, 0, 320, 320), dataItem: dataItem)
         
         pieChart.center = ChartView.center
         
@@ -119,7 +119,7 @@ class ChartViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource{
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("ChartOptionCell") as! ChartOptionCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("ChartOptionCell") as! ChartOptionCell
         
 //        if cell == nil{
 //            cell = UITableViewCell(style: UITableViewCellStyle.Value2, reuseIdentifier: "chartCell")

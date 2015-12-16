@@ -55,7 +55,7 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
             SchoolName.text = schoolName
         }
             
-        if SchoolName.text.isEmpty{
+        if SchoolName.text!.isEmpty{
             SchoolName.text = Global.MySchoolList.count > 0 ? Global.MySchoolList[0].Name : ""
         }
         
@@ -112,7 +112,7 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
         
         let redirect = Redirect.text
         
-        Keychain.save("schoolName", data: schoolName.dataValue)
+        Keychain.save("schoolName", data: schoolName!.dataValue)
         
         var options = [String]()
         
@@ -130,13 +130,13 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
             alert.addAction(UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: nil))
             
             alert.addAction(UIAlertAction(title: "單選", style: UIAlertActionStyle.Default, handler: { (action1) -> Void in
-                NotificationService.SendMessage(schoolName, type: "single", sender: sender, redirect: redirect, msg: message, receivers: receivers, options: options, accessToken: Global.AccessToken)
+                NotificationService.SendMessage(schoolName!, type: "single", sender: sender!, redirect: redirect!, msg: message, receivers: receivers, options: options, accessToken: Global.AccessToken)
                 
                 self.navigationController?.popViewControllerAnimated(true)
             }))
             
             alert.addAction(UIAlertAction(title: "複選", style: UIAlertActionStyle.Default, handler: { (action2) -> Void in
-                NotificationService.SendMessage(schoolName, type: "multiple", sender: sender, redirect: redirect, msg: message, receivers: receivers, options: options, accessToken: Global.AccessToken)
+                NotificationService.SendMessage(schoolName!, type: "multiple", sender: sender!, redirect: redirect!, msg: message, receivers: receivers, options: options, accessToken: Global.AccessToken)
                 
                 self.navigationController?.popViewControllerAnimated(true)
             }))
@@ -145,7 +145,7 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
             
         }
         else{
-            NotificationService.SendMessage(schoolName, type: "normal", sender: sender, redirect: redirect, msg: message, receivers: receivers, options: [String](), accessToken: Global.AccessToken)
+            NotificationService.SendMessage(schoolName!, type: "normal", sender: sender!, redirect: redirect!, msg: message, receivers: receivers, options: [String](), accessToken: Global.AccessToken)
             
             self.navigationController?.popViewControllerAnimated(true)
         }
@@ -211,7 +211,7 @@ class OutboxSendViewCtrl: UIViewController,UITextFieldDelegate,UITextViewDelegat
         return true
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)
     }
     
@@ -233,7 +233,7 @@ class TeacherSelector{
     
     func GetReceivers() -> [TeacherAccount]{
         
-        var tmp = Teachers.filter { (t) -> Bool in
+        let tmp = Teachers.filter { (t) -> Bool in
             return t.UUID.isEmpty
         }
         
@@ -241,7 +241,7 @@ class TeacherSelector{
             SetTeachersUUID(tmp)
         }
         
-        var retVal = Teachers.filter { (t) -> Bool in
+        let retVal = Teachers.filter { (t) -> Bool in
             return !t.UUID.isEmpty
         }
         

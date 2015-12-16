@@ -30,7 +30,7 @@ class WatchReaderListViewCtrl: UIViewController,UITableViewDataSource,UITableVie
         
         searchBar.delegate = self
         
-        ReaderUUIDs = ReadersCatch.keys.array
+        ReaderUUIDs = Array(ReadersCatch.keys)
         
         DisplayData = ReaderUUIDs
         
@@ -53,7 +53,7 @@ class WatchReaderListViewCtrl: UIViewController,UITableViewDataSource,UITableVie
         
         let uuid = DisplayData[indexPath.row]
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("teacher") as? UITableViewCell
+        var cell = tableView.dequeueReusableCellWithIdentifier("teacher")
         
         if cell == nil{
             cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "teacher")
@@ -63,7 +63,7 @@ class WatchReaderListViewCtrl: UIViewController,UITableViewDataSource,UITableVie
         cell?.textLabel?.text = ReadersCatch[uuid]
         //cell?.detailTextLabel?.text = uuid
         
-        if contains(ReadList, uuid){
+        if ReadList.contains(uuid){
             cell?.accessoryType = UITableViewCellAccessoryType.Checkmark
         }
         else{
@@ -85,7 +85,7 @@ class WatchReaderListViewCtrl: UIViewController,UITableViewDataSource,UITableVie
             
             for (key,value) in self.ReadersCatch{
                 
-                if contains(self.ReadList, key){
+                if self.ReadList.contains(key){
                     founds.append(key)
                 }
             }
@@ -102,7 +102,7 @@ class WatchReaderListViewCtrl: UIViewController,UITableViewDataSource,UITableVie
             
             for (key,value) in self.ReadersCatch{
                 
-                if !contains(self.ReadList, key){
+                if !self.ReadList.contains(key){
                     founds.append(key)
                 }
             }

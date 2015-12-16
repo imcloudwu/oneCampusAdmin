@@ -101,24 +101,29 @@ class AttendanceViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         var rsp = _con.SendRequest("attendance.GetStudentAttendance", bodyContent: "<Request><RefStudentId>\(StudentData.ID)</RefStudentId></Request>", &err)
         
         if err != nil{
-            ShowErrorAlert(self,"取得資料發生錯誤",err.message)
+            ShowErrorAlert(self,title: "取得資料發生錯誤",msg: err.message)
             return retVal
         }
         
-        let xml = AEXMLDocument(xmlData: rsp.dataValue, error: &nserr)
+        let xml: AEXMLDocument?
+        do {
+            xml = try AEXMLDocument(xmlData: rsp.dataValue)
+        } catch _ {
+            xml = nil
+        }
         
         if let attendances = xml?.root["Response"]["Attendance"].all {
             for attendance in attendances{
-                let occurDate = attendance.attributes["OccurDate"] as! String
-                let schoolYear = attendance.attributes["SchoolYear"] as! String
-                let semester = attendance.attributes["Semester"] as! String
+                let occurDate = attendance.attributes["OccurDate"]
+                let schoolYear = attendance.attributes["SchoolYear"]
+                let semester = attendance.attributes["Semester"]
                 
                 if let periods = attendance["Detail"]["Period"].all {
                     for period in periods{
-                        let absenceType = period.attributes["AbsenceType"] as! String
+                        let absenceType = period.attributes["AbsenceType"]
                         let periodName = period.stringValue
                         
-                        let item = AttendanceItem(OccurDate: occurDate, SchoolYear: schoolYear, Semester: semester, AbsenceType: absenceType, Period: periodName, Value: 1)
+                        let item = AttendanceItem(OccurDate: occurDate!, SchoolYear: schoolYear!, Semester: semester!, AbsenceType: absenceType!, Period: periodName, Value: 1)
                         
                         retVal.append(item)
                     }
@@ -152,9 +157,9 @@ class AttendanceViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
             }
         }
         
-        newData = tmpData.values.array
+        newData = Array(tmpData.values)
         
-        newData.sort{$0.OccurDate > $1.OccurDate}
+        newData.sortInPlace{$0.OccurDate > $1.OccurDate}
         
         var sum = [String:Int]()
         
@@ -171,7 +176,7 @@ class AttendanceViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         
         //按個別假別種類建立一個summary item
         for s in sum{
-            var summaryItem = AttendanceItem(OccurDate: "", SchoolYear: "", Semester: "", AbsenceType: s.0, Period: "", Value: s.1)
+            let summaryItem = AttendanceItem(OccurDate: "", SchoolYear: "", Semester: "", AbsenceType: s.0, Period: "", Value: s.1)
             newData.insert(summaryItem, atIndex: 0)
             total += s.1
         }
@@ -194,7 +199,7 @@ class AttendanceViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         
         //處理summmary item
         if data.SchoolYear == "" && data.Semester == ""{
-            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem") as? UITableViewCell
+            var cell = tableView.dequeueReusableCellWithIdentifier("summaryItem")
             
             if cell == nil{
                 cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "summaryItem")
@@ -251,7 +256,7 @@ struct SemesterItem : Equatable,Comparable{
     }
     
     var CompareValue : Int{
-        if let sy = SchoolYear.toInt() , let sm = Semester.toInt(){
+        if let sy = Int(SchoolYear) , let sm = Int(Semester){
             return sy * 10 + sm
         }
         else{
