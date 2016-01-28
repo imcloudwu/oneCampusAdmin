@@ -10,10 +10,11 @@ import UIKit
 
 class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSource,ContainerViewProtocol {
     
-    var _con : Connection!
+    var _con = Connection()
     
     var _data = [DisciplineItem]()
     var _displayData = [DisciplineItem]()
+    var _displayDataBase = [DisciplineItem]()
     var _Semesters = [SemesterItem]()
     var _CurrentSemester : SemesterItem!
     var StudentData : Student!
@@ -26,8 +27,45 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
     
     var ParentNavigationItem : UINavigationItem?
     
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var segment: UISegmentedControl!
+    
+    var _SegmentItems = [String]()
+    
+    @IBAction func SegmentSelect(sender: AnyObject) {
+        
+        let type = _SegmentItems[segment.selectedSegmentIndex]
+        
+        self._displayData = type == "全部" ? self._displayDataBase : self._displayDataBase.filter({ data in
+            
+            switch type{
+            case "大功":
+                return data.MA > 0
+            case "小功":
+                return data.MB > 0
+            case "嘉獎":
+                return data.MC > 0
+            case "大過":
+                return data.DA > 0
+            case "小過":
+                return data.DB > 0
+            case "警告":
+                return data.DC > 0
+            default:
+                return false
+            }
+        })
+        
+        self.noDataLabel.hidden = self._displayData.count > 0
+        
+        self.tableView.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        segment.removeAllSegments()
+        segment.translatesAutoresizingMaskIntoConstraints = true
         
         progressTimer = ProgressTimer(progressBar: progress)
         
@@ -50,7 +88,7 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
             
-            //self._con = GetCommonConnect(self.StudentData.DSNS, self._con, self)
+            //CommonConnect(self.StudentData.DSNS, self._con, self)
             self._con = GetCommonConnect(self.StudentData.DSNS)
             
             self._data = self.GetDisciplineData()
@@ -64,7 +102,7 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
                     self.SetDataToTableView(self._Semesters[0])
                 }
                 else{
-                     self.noDataLabel.hidden = false
+                    self.noDataLabel.hidden = false
                 }
                 
                 self.progressTimer.StopProgress()
@@ -122,28 +160,68 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         
         newData.sortInPlace{$0.Date > $1.Date}
         
-        let sumMItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "獎勵總計", IsClear: false, MA: ma, MB: mb, MC: mc, DA: 0, DB: 0, DC: 0)
-        let maItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "大功", IsClear: false, MA: ma, MB: 0, MC: 0, DA: 0, DB: 0, DC: 0)
-        let mbItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "小功", IsClear: false, MA: 0, MB: mb, MC: 0, DA: 0, DB: 0, DC: 0)
-        let mcItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "嘉獎", IsClear: false, MA: 0, MB: 0, MC: mc, DA: 0, DB: 0, DC: 0)
+        //        let sumMItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "獎勵總計", IsClear: false, MA: ma, MB: mb, MC: mc, DA: 0, DB: 0, DC: 0)
+        //        let maItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "大功", IsClear: false, MA: ma, MB: 0, MC: 0, DA: 0, DB: 0, DC: 0)
+        //        let mbItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "小功", IsClear: false, MA: 0, MB: mb, MC: 0, DA: 0, DB: 0, DC: 0)
+        //        let mcItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "嘉獎", IsClear: false, MA: 0, MB: 0, MC: mc, DA: 0, DB: 0, DC: 0)
+        //
+        //        let sumDItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "懲戒總計", IsClear: false, MA: 0, MB: 0, MC: 0, DA: da, DB: db, DC: dc)
+        //        let daItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "大過", IsClear: false, MA: 0, MB: 0, MC: 0, DA: da, DB: 0, DC: 0)
+        //        let dbItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "小過", IsClear: false, MA: 0, MB: 0, MC: 0, DA: 0, DB: db, DC: 0)
+        //        let dcItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "警告", IsClear: false, MA: 0, MB: 0, MC: 0, DA: 0, DB: 0, DC: dc)
+        //
+        //        newData.insert(dcItem, atIndex: 0)
+        //        newData.insert(dbItem, atIndex: 0)
+        //        newData.insert(daItem, atIndex: 0)
+        //        newData.insert(sumDItem, atIndex: 0)
+        //        newData.insert(mcItem, atIndex: 0)
+        //        newData.insert(mbItem, atIndex: 0)
+        //        newData.insert(maItem, atIndex: 0)
+        //        newData.insert(sumMItem, atIndex: 0)
         
-        let sumDItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "懲戒總計", IsClear: false, MA: 0, MB: 0, MC: 0, DA: da, DB: db, DC: dc)
-        let daItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "大過", IsClear: false, MA: 0, MB: 0, MC: 0, DA: da, DB: 0, DC: 0)
-        let dbItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "小過", IsClear: false, MA: 0, MB: 0, MC: 0, DA: 0, DB: db, DC: 0)
-        let dcItem = DisciplineItem(Type: DisciplineType.Summary, Date: "", SchoolYear: "", Semester: "", Reason: "警告", IsClear: false, MA: 0, MB: 0, MC: 0, DA: 0, DB: 0, DC: dc)
+        segment.removeAllSegments()
+        segment.insertSegmentWithTitle("警告(\(dc))", atIndex: 0, animated: false)
+        segment.insertSegmentWithTitle("小過(\(db))", atIndex: 0, animated: false)
+        segment.insertSegmentWithTitle("大過(\(da))", atIndex: 0, animated: false)
+        segment.insertSegmentWithTitle("嘉獎(\(mc))", atIndex: 0, animated: false)
+        segment.insertSegmentWithTitle("小功(\(mb))", atIndex: 0, animated: false)
+        segment.insertSegmentWithTitle("大功(\(ma))", atIndex: 0, animated: false)
+        segment.insertSegmentWithTitle("全部(\(dc + db + da + mc + mb + ma))", atIndex: 0, animated: true)
         
-        newData.insert(dcItem, atIndex: 0)
-        newData.insert(dbItem, atIndex: 0)
-        newData.insert(daItem, atIndex: 0)
-        newData.insert(sumDItem, atIndex: 0)
-        newData.insert(mcItem, atIndex: 0)
-        newData.insert(mbItem, atIndex: 0)
-        newData.insert(maItem, atIndex: 0)
-        newData.insert(sumMItem, atIndex: 0)
+        _SegmentItems.removeAll(keepCapacity: false)
+        _SegmentItems.insert("警告", atIndex: 0)
+        _SegmentItems.insert("小過", atIndex: 0)
+        _SegmentItems.insert("大過", atIndex: 0)
+        _SegmentItems.insert("嘉獎", atIndex: 0)
+        _SegmentItems.insert("小功", atIndex: 0)
+        _SegmentItems.insert("大功", atIndex: 0)
+        _SegmentItems.insert("全部", atIndex: 0)
         
-        _displayData = newData
+        var besSize = segment.sizeThatFits(CGSize.zero)
         
-        tableView.reloadData()
+        let screenwidth = scrollView.frame.width
+        
+        if besSize.width < screenwidth - 16 {
+            besSize.width = screenwidth - 16
+        }
+        
+        segment.frame.size.width = besSize.width
+        
+        if besSize.width > screenwidth{
+            scrollView.contentSize = CGSizeMake(besSize.width + 16 , 0)
+        }
+        else{
+            scrollView.contentSize = CGSizeMake(besSize.width , 0)
+        }
+        
+        scrollView.contentOffset = CGPointMake(0 - self.scrollView.contentInset.left, 0)
+        
+        _displayDataBase = newData
+        
+        if _SegmentItems.count > 0{
+            segment.selectedSegmentIndex = 0
+            SegmentSelect(self)
+        }
     }
     
     func GetDisciplineData() -> [DisciplineItem]{
@@ -186,7 +264,6 @@ class DisciplineViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
                 if meritFlag == DisciplineType.Merit{
                     ma = (discipline["Merit"].attributes["A"]?.intValue)!
                     mb = (discipline["Merit"].attributes["B"]?.intValue)!
-                    
                     mc = (discipline["Merit"].attributes["C"]?.intValue)!
                 }
                 else{

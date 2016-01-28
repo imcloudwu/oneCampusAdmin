@@ -15,7 +15,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
     var _SubjectScales : Int16 = 2
     var _DomainScales : Int16 = 2
     
-    var _con : Connection!
+    var _con = Connection()
     var _CurrentSemester : SemesterItem!
     var _ExamList = [String]()
     var _CurrentExam = ""
@@ -73,8 +73,9 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
             
-            //self._con = GetCommonConnect(self.StudentData.DSNS, self._con, self)
+            //CommonConnect(self.StudentData.DSNS, self._con, self)
             self._con = GetCommonConnect(self.StudentData.DSNS)
+            
             self.CheckDSNS()
             
             if self._isJH{
@@ -110,7 +111,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         for semester in _Semesters{
             actionSheet.addAction(UIAlertAction(title: semester.Description, style: UIAlertActionStyle.Default, handler: { (action) -> Void in
                 
-                    self.SelectSemester(semester)
+                self.SelectSemester(semester)
                 
             }))
         }
@@ -145,8 +146,8 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
             //datas.sort({$0.DisplayOrder < $1.DisplayOrder})
             
             for data in datas{
-                if !_ExamList.contains(data.Exam){
-                    _ExamList.append(data.Exam)
+                if !_ExamList.contains(data.ExamName){
+                    _ExamList.append(data.ExamName)
                 }
             }
             
@@ -199,7 +200,11 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                     
                     avg = avg.Round(_SubjectScales)
                     
-                    mustAppendItem.append(DisplayItem(Title: data.Subject, Value: "\(avg.ToString(_SubjectScales))", OtherInfo: "定期 : \(data.Score)", OtherInfo2: "平時 : \(data.AssignmentScore)", OtherInfo3: "權數 : \(data.Credit)", ColorAlarm: avg < 60))
+                    let di = DisplayItem(Title: data.Subject, Value: "\(avg.ToString(_SubjectScales))", OtherInfo: "定期 : \(data.Score)", OtherInfo2: "平時 : \(data.AssignmentScore)", OtherInfo3: "權數 : \(data.Credit)", ColorAlarm: avg < 60)
+                    
+                    di.OtherObject = item
+                    
+                    mustAppendItem.append(di)
                     
                     sumCredit += data.Credit.doubleValue
                     sumScore += data.Credit.doubleValue * avg
@@ -265,7 +270,11 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                 
                 lastScore = scoreValue
                 
-                displayData.append(DisplayItem(Title: item.Exam, Value: item.Score, OtherInfo: result, ColorAlarm: scoreValue < 60))
+                let di = DisplayItem(Title: item.ExamName, Value: item.Score, OtherInfo: result, OtherInfo2: "", OtherInfo3: "", ColorAlarm: scoreValue < 60)
+                
+                di.OtherObject = item
+                
+                displayData.append(di)
             }
         }
         
@@ -276,7 +285,12 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
     
     func SetScoreCalcRule(){
         var err : DSFault!
-        let rsp = _con.SendRequest("examScore.GetScoreCalcRule", bodyContent: "<Request><StudentID>\(StudentData.ID)</StudentID></Request>", &err)
+        var rsp = _con.SendRequest("examScore.GetScoreCalcRule", bodyContent: "<Request><StudentID>\(StudentData.ID)</StudentID></Request>", &err)
+        
+        if err != nil{
+            ShowErrorAlert(self,title: "取得資料發生錯誤",msg: err.message)
+            return
+        }
         
         var nserr : NSError?
         
@@ -302,7 +316,12 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         var retVal = [ExamScoreItem]()
         
         var err : DSFault!
-        let rsp = _con.SendRequest("examScore.GetExamScoreSH", bodyContent: "<Request><Condition><StudentID>\(StudentData.ID)</StudentID></Condition></Request>", &err)
+        var rsp = _con.SendRequest("examScore.GetExamScoreSH", bodyContent: "<Request><Condition><StudentID>\(StudentData.ID)</StudentID></Condition></Request>", &err)
+        
+        if err != nil{
+            ShowErrorAlert(self,title: "取得資料發生錯誤",msg: err.message)
+            return retVal
+        }
         
         var nserr : NSError?
         
@@ -328,11 +347,11 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                         if let exams = course["Exam"].all{
                             for exam in exams{
                                 let examDisplayOrder = exam.attributes["ExamDisplayOrder"]?.intValue
+                                let examId = exam.attributes["ExamID"]
                                 let examName = exam.attributes["ExamName"]
-                                
                                 let score = exam["ScoreDetail"].attributes["Score"]
                                 
-                                let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!,Domain: "", Subject: subject!, Credit: credit!, Exam: examName!, Score: score!, AssignmentScore: "", DisplayOrder: examDisplayOrder!, ScorePercentage: 0)
+                                let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!,Domain: "", Subject: subject!, Credit: credit!, ExamId: examId!, ExamName: examName!, Score: score!, AssignmentScore: "", DisplayOrder: examDisplayOrder!, ScorePercentage: 0)
                                 
                                 retVal.append(item)
                             }
@@ -349,11 +368,16 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
     
     //取得國中資料
     func GetJHData() -> [ExamScoreItem]{
-     
+        
         var retVal = [ExamScoreItem]()
         
         var err : DSFault!
-        let rsp = _con.SendRequest("examScore.GetExamScoreJH", bodyContent: "<Request><Condition><StudentID>\(StudentData.ID)</StudentID></Condition></Request>", &err)
+        var rsp = _con.SendRequest("examScore.GetExamScoreJH", bodyContent: "<Request><Condition><StudentID>\(StudentData.ID)</StudentID></Condition></Request>", &err)
+        
+        if err != nil{
+            ShowErrorAlert(self,title: "取得資料發生錯誤",msg: err.message)
+            return retVal
+        }
         
         var nserr : NSError?
         
@@ -382,7 +406,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                         
                         //針對高雄的資料新增平時成績
                         if !_isHS , let ordinarilyScore = course["FixExtension"]["Extension"]["OrdinarilyScore"].first?.stringValue{
-                            let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!, Domain: domain!, Subject: subject!, Credit: credit!, Exam: "平時成績", Score: ordinarilyScore, AssignmentScore: "", DisplayOrder: 99, ScorePercentage: scorePercentage)
+                            let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!, Domain: domain!, Subject: subject!, Credit: credit!, ExamId: "", ExamName: "平時成績", Score: ordinarilyScore, AssignmentScore: "", DisplayOrder: 99, ScorePercentage: scorePercentage)
                             
                             retVal.append(item)
                         }
@@ -390,9 +414,9 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                         if let exams = course["Exam"].all{
                             for exam in exams{
                                 let examDisplayOrder = exam.attributes["ExamDisplayOrder"]?.intValue
+                                let examId = exam.attributes["ExamID"]
                                 let examName = exam.attributes["ExamName"]
                                 var score = ""
-                                
                                 var assignmentScore = ""
                                 
                                 if let tmpScore = exam["ScoreDetail"]["Extension"]["Extension"]["Score"].first?.stringValue{
@@ -403,8 +427,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                                     assignmentScore = tmpAssignmentScore
                                 }
                                 
-                                let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!, Domain: domain!, Subject: subject!, Credit: credit!, Exam:
-                                    examName!, Score: score, AssignmentScore: assignmentScore, DisplayOrder: examDisplayOrder!, ScorePercentage: scorePercentage)
+                                let item = ExamScoreItem(SchoolYear: schoolYear!, Semester: semester!, CourseID: courseID!, Domain: domain!, Subject: subject!, Credit: credit!, ExamId: examId!, ExamName: examName!, Score: score, AssignmentScore: assignmentScore, DisplayOrder: examDisplayOrder!, ScorePercentage: scorePercentage)
                                 
                                 retVal.append(item)
                             }
@@ -430,7 +453,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
         }
         else{
             for data in _data{
-                if data.SchoolYear == _CurrentSemester.SchoolYear && data.Semester == _CurrentSemester.Semester && data.Exam == examName{
+                if data.SchoolYear == _CurrentSemester.SchoolYear && data.Semester == _CurrentSemester.Semester && data.ExamName == examName{
                     retVal.append(data)
                 }
             }
@@ -535,7 +558,8 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
             
             if cell == nil{
                 cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: "summaryItem")
-                cell?.textLabel?.textColor = UIColor(red: 19/255, green: 144/255, blue: 255/255, alpha: 1)
+                cell?.backgroundColor = UIColor(red: 219/255, green: 228/255, blue: 238/255, alpha: 1)
+                //cell?.textLabel?.textColor = UIColor(red: 19/255, green: 144/255, blue: 255/255, alpha: 1)
             }
             
             cell!.textLabel?.text = data.Title
@@ -545,7 +569,7 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
                 cell!.detailTextLabel?.textColor = UIColor.redColor()
             }
             else{
-                cell!.detailTextLabel?.textColor = UIColor.blackColor()
+                cell!.detailTextLabel?.textColor = UIColor.darkGrayColor()
             }
             
             return cell!
@@ -633,14 +657,29 @@ class ExamScoreViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSou
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat{
-        if _isJH && _displayData[indexPath.row].OtherInfo == "summaryItem"{
-            return 30
-        }
-        else if !_isJH && _displayData[indexPath.row].OtherInfo != "summaryItem"{
+        
+        if _displayData[indexPath.row].OtherInfo == "summaryItem"{
             return 30
         }
         
-        return 50
+        return _isJH ? 50 : 30
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath){
+        
+        let data = _displayData[indexPath.row]
+        
+        if data.OtherInfo != "summaryItem"{
+            
+            let chartView = self.storyboard?.instantiateViewControllerWithIdentifier("ExamScoreChart") as! ExamScoreChart
+            
+            chartView.StudentData = StudentData
+            chartView.OtherData = data
+            chartView.IsJH = _isJH
+            chartView.IsHS = _isHS
+            
+            self.navigationController?.pushViewController(chartView, animated: true)
+        }
     }
     
 }
@@ -652,7 +691,8 @@ struct ExamScoreItem : SemesterProtocol{
     var Domain : String
     var Subject : String
     var Credit : String
-    var Exam : String
+    var ExamId : String
+    var ExamName : String
     var Score : String
     var AssignmentScore : String
     var DisplayOrder : Int

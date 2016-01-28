@@ -36,6 +36,8 @@ public class Global{
     
     static var LockQueue = dispatch_queue_create("LockQueue", nil)
     
+    static var ScreenSize: CGRect = UIScreen.mainScreen().bounds
+    
     static var SchoolListChanged = false
     
     static func Reset(){

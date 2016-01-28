@@ -109,6 +109,8 @@ class StudentDetailViewCtrl: UIViewController {
     
     @IBAction func SegmentValueChange(sender: AnyObject) {
         
+        lastSegmentIndex = Segment.selectedSegmentIndex
+        
         if Segment.selectedSegmentIndex == 0{
             let contentView = self.storyboard?.instantiateViewControllerWithIdentifier("studentInfoViewCtrl") as! StudentInfoViewCtrl
             ChangeContainerViewContent(contentView)

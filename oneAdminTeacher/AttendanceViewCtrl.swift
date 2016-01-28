@@ -14,21 +14,47 @@ class AttendanceViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
     @IBOutlet weak var progress: UIProgressView!
     @IBOutlet weak var noDataLabel: UILabel!
     
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var segment: UISegmentedControl!
+    
     var progressTimer:ProgressTimer!
     
     var _data = [AttendanceItem]()
+    var _displayDataBase = [AttendanceItem]()
     var _displayData = [AttendanceItem]()
     var _Semesters = [SemesterItem]()
     var _CurrentSemester : SemesterItem!
     
     var StudentData : Student!
     
-    var _con : Connection!
+    var _con = Connection()
     
     var ParentNavigationItem : UINavigationItem?
     
+    var _SegmentItems = [String]()
+    
+    @IBAction func SegmentSelect(sender: AnyObject) {
+        
+        let type = _SegmentItems[segment.selectedSegmentIndex]
+        
+        self._displayData = type == "總計" ? self._displayDataBase : self._displayDataBase.filter({ data in
+            
+            if data.AbsenceType == type{
+                return true
+            }
+            
+            return false
+        })
+        
+        self.tableView.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        segment.removeAllSegments()
+        segment.translatesAutoresizingMaskIntoConstraints = true
+        //scrollView.setTranslatesAutoresizingMaskIntoConstraints(true)
         
         progressTimer = ProgressTimer(progressBar: progress)
         
@@ -52,8 +78,9 @@ class AttendanceViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
             
-            //self._con = GetCommonConnect(self.StudentData.DSNS, self._con, self)
+            //CommonConnect(self.StudentData.DSNS, self._con, self)
             self._con = GetCommonConnect(self.StudentData.DSNS)
+            
             self._data = self.GetAttendanceData()
             
             self._Semesters = GetSemesters(self._data)
@@ -174,19 +201,51 @@ class AttendanceViewCtrl: UIViewController,UITableViewDelegate,UITableViewDataSo
         
         var total = 0
         
+        segment.removeAllSegments()
+        _SegmentItems.removeAll(keepCapacity: false)
+        
         //按個別假別種類建立一個summary item
         for s in sum{
-            let summaryItem = AttendanceItem(OccurDate: "", SchoolYear: "", Semester: "", AbsenceType: s.0, Period: "", Value: s.1)
-            newData.insert(summaryItem, atIndex: 0)
+            //            var summaryItem = AttendanceItem(OccurDate: "", SchoolYear: "", Semester: "", AbsenceType: s.0, Period: "", Value: s.1)
+            //            newData.insert(summaryItem, atIndex: 0)
             total += s.1
+            
+            segment.insertSegmentWithTitle("\(s.0)(\(s.1))", atIndex: 0, animated: false)
+            _SegmentItems.insert(s.0, atIndex: 0)
         }
         
         //總計
-        newData.insert(AttendanceItem(OccurDate: "", SchoolYear: "", Semester: "", AbsenceType: "總計", Period: "", Value: total), atIndex: 0)
+        //newData.insert(AttendanceItem(OccurDate: "", SchoolYear: "", Semester: "", AbsenceType: "總計", Period: "", Value: total), atIndex: 0)
+        
+        segment.insertSegmentWithTitle("總計(\(total))", atIndex: 0, animated: true)
+        _SegmentItems.insert("總計", atIndex: 0)
+        
+        var besSize = segment.sizeThatFits(CGSize.zero)
+        
+        let screenwidth = scrollView.frame.width
+        
+        if besSize.width < screenwidth - 16 {
+            besSize.width = screenwidth - 16
+        }
+        
+        segment.frame.size.width = besSize.width
+        
+        if besSize.width > screenwidth{
+            scrollView.contentSize = CGSizeMake(besSize.width + 16 , 0)
+        }
+        else{
+            scrollView.contentSize = CGSizeMake(besSize.width , 0)
+        }
+        
+        scrollView.contentOffset = CGPointMake(0 - self.scrollView.contentInset.left, 0)
         
         self._displayData = newData
+        self._displayDataBase = newData
         
-        self.tableView.reloadData()
+        if self._SegmentItems.count > 0{
+            segment.selectedSegmentIndex = 0
+            SegmentSelect(self)
+        }
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int{

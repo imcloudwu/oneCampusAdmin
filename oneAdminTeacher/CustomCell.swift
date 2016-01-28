@@ -8,6 +8,47 @@
 
 import UIKit
 
+class SHSemesterScoreSummaryCell : UITableViewCell{
+    
+    @IBOutlet weak var 實得: UILabel!
+    @IBOutlet weak var 已修: UILabel!
+    @IBOutlet weak var 必修: UILabel!
+    @IBOutlet weak var 選修: UILabel!
+    @IBOutlet weak var 校訂必修: UILabel!
+    @IBOutlet weak var 校訂選修: UILabel!
+    @IBOutlet weak var 部訂必修: UILabel!
+    @IBOutlet weak var 部訂選修: UILabel!
+    @IBOutlet weak var 實習: UILabel!
+    
+    override func awakeFromNib() {
+        
+    }
+}
+
+class JHSemesterScoreSummaryCell : UITableViewCell{
+    
+    @IBOutlet weak var 不及格領域數: UILabel!
+    @IBOutlet weak var 學習領域成績: UILabel!
+    @IBOutlet weak var 課程學期成績: UILabel!
+    
+    override func awakeFromNib() {
+        
+    }
+}
+
+class SemesterScoreItemCell : UITableViewCell{
+    
+    @IBOutlet weak var Subject: UILabel!
+    @IBOutlet weak var Score: UILabel!
+    @IBOutlet weak var Info: UILabel!
+    @IBOutlet weak var Check: UIImageView!
+    
+    override func awakeFromNib() {
+        Score.layer.cornerRadius = Score.frame.size.width / 2
+        Score.layer.masksToBounds = true
+    }
+}
+
 class StudentCell2 : UITableViewCell{
     
     @IBOutlet weak var Photo: UIImageView!
@@ -62,17 +103,6 @@ class DisciplineItemCell : UITableViewCell{
     @IBOutlet weak var Date: UILabel!
     @IBOutlet weak var Status: UILabel!
     @IBOutlet weak var Reason: UILabel!
-    
-    override func awakeFromNib() {
-        //
-    }
-}
-
-class SemesterScoreItemCell : UITableViewCell{
-    
-    @IBOutlet weak var Subject: UILabel!
-    @IBOutlet weak var Score: UILabel!
-    @IBOutlet weak var Info: UILabel!
     
     override func awakeFromNib() {
         //
