@@ -74,6 +74,15 @@ class SideMenuViewCtrl: UIViewController{
 //        ChangeContentView(nextView)
     }
     
+    @IBAction func SendMailToSupportTeam(sender: AnyObject) {
+        
+        let url = "mailto:support@ischool.com.tw?subject=關於 1Campus 校長 iOS 的建議&body=學校名稱：\n姓名：\n您的聯繫方式（信箱或電話）：\n請簡述您的操作問題或建議：　"
+        
+        if let encodeUrl = NSURL(string: url.UrlEncoding!){
+            UIApplication.sharedApplication().openURL(encodeUrl)
+        }
+    }
+    
     
     @IBAction func StudentQueryBtnClick(sender: AnyObject) {
         

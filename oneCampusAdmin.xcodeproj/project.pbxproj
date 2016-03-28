@@ -58,6 +58,7 @@
 		6173AAD51B5797920049EB63 /* sidebackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6173AAD41B5797920049EB63 /* sidebackground.jpg */; };
 		6173AAD71B57A9930049EB63 /* DisplayViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6173AAD61B57A9930049EB63 /* DisplayViewCtrl.swift */; };
 		61763E3A1B2ECD3A004A0DCD /* oneAdminTeacher.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 61763E381B2ECD3A004A0DCD /* oneAdminTeacher.xcdatamodeld */; };
+		617D08E11CA8D04500578721 /* Support Filled-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 617D08E01CA8D04500578721 /* Support Filled-32.png */; };
 		617E07361BA66E360082F667 /* AddSchoolViewCtrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617E07351BA66E360082F667 /* AddSchoolViewCtrl.swift */; };
 		617F32311B60F90100A03CD6 /* Message Filled-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 617F32301B60F90100A03CD6 /* Message Filled-50.png */; };
 		6189CFA71B3D43B00098AAD7 /* SchoolOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6189CFA61B3D43B00098AAD7 /* SchoolOptionsView.swift */; };
@@ -184,6 +185,7 @@
 		6173AAD41B5797920049EB63 /* sidebackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = sidebackground.jpg; path = image/sidebackground.jpg; sourceTree = SOURCE_ROOT; };
 		6173AAD61B57A9930049EB63 /* DisplayViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayViewCtrl.swift; sourceTree = "<group>"; };
 		61763E391B2ECD3A004A0DCD /* oneAdminTeacher.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = oneAdminTeacher.xcdatamodel; sourceTree = "<group>"; };
+		617D08E01CA8D04500578721 /* Support Filled-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Support Filled-32.png"; path = "icon/Support Filled-32.png"; sourceTree = SOURCE_ROOT; };
 		617E07351BA66E360082F667 /* AddSchoolViewCtrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddSchoolViewCtrl.swift; sourceTree = "<group>"; };
 		617F32301B60F90100A03CD6 /* Message Filled-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Message Filled-50.png"; path = "icon/Message Filled-50.png"; sourceTree = SOURCE_ROOT; };
 		6189CFA61B3D43B00098AAD7 /* SchoolOptionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchoolOptionsView.swift; sourceTree = "<group>"; };
@@ -306,6 +308,7 @@
 		61E308D21B2A893400BE36D0 /* icon */ = {
 			isa = PBXGroup;
 			children = (
+				617D08E01CA8D04500578721 /* Support Filled-32.png */,
 				6103C8D61C23A60800E94778 /* Checked-32.png */,
 				61BDFDB01BA6D54500191480 /* Info Filled-32.png */,
 				61553A1B1B7C6ED400929EBB /* Starred Ticket Filled-25.png */,
@@ -614,6 +617,7 @@
 				6104420C1B44E9FC007D3C98 /* Search Property Filled-32.png in Resources */,
 				610E0A501B53568900186BF3 /* Menu Filled-25.png in Resources */,
 				61E282441B6B76A4003DE4B1 /* 1CampusAdminIcon-180.png in Resources */,
+				617D08E11CA8D04500578721 /* Support Filled-32.png in Resources */,
 				61553A1E1B7C6ED400929EBB /* Starred Ticket-25.png in Resources */,
 				610CB0921B5523E80051EC76 /* Age-25.png in Resources */,
 				61BDFDB11BA6D54500191480 /* Info Filled-32.png in Resources */,
